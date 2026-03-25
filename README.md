@@ -1,136 +1,199 @@
-# StockFlow
+<div align="center">
 
-**StockFlow** is a full-stack inventory and procurement management platform built with **Spring Boot, React, Tailwind CSS, and PostgreSQL**.  
-It is designed to help businesses manage products, suppliers, stock levels, and purchase orders through a modern dashboard.
+```
+███████╗████████╗ ██████╗  ██████╗██╗  ██╗███████╗██╗      ██████╗ ██╗    ██╗
+██╔════╝╚══██╔══╝██╔═══██╗██╔════╝██║ ██╔╝██╔════╝██║     ██╔═══██╗██║    ██║
+███████╗   ██║   ██║   ██║██║     █████╔╝ █████╗  ██║     ██║   ██║██║ █╗ ██║
+╚════██║   ██║   ██║   ██║██║     ██╔═██╗ ██╔══╝  ██║     ██║   ██║██║███╗██║
+███████║   ██║   ╚██████╔╝╚██████╗██║  ██╗██║     ███████╗╚██████╔╝╚███╔███╔╝
+╚══════╝   ╚═╝    ╚═════╝  ╚═════╝╚═╝  ╚═╝╚═╝     ╚══════╝ ╚═════╝  ╚══╝╚══╝
+```
 
-> 🚧 This project is currently in development and is being built progressively as a portfolio project for full-stack roles.
+**Full-stack inventory & procurement management platform**
+
+[![Java](https://img.shields.io/badge/Java_17-ED8B00?style=flat-square&logo=openjdk&logoColor=white)](https://openjdk.org/)
+[![Spring Boot](https://img.shields.io/badge/Spring_Boot_3.5-6DB33F?style=flat-square&logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
+[![React](https://img.shields.io/badge/React_18-20232A?style=flat-square&logo=react&logoColor=61DAFB)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL_15-4169E1?style=flat-square&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white)](https://www.docker.com/)
+
+> 🚧 Actively developed as a portfolio project targeting full-stack roles in Singapore.
+
+</div>
 
 ---
 
-## Features
+## What is StockFlow?
 
-### Current / Planned Features
-- Product management
-- Supplier management
-- Inventory tracking
-- Purchase order workflow
-- Role-based authentication and authorization
-- Dashboard analytics
-- Search, filters, and pagination
-- Audit logs and activity tracking
-- Responsive admin interface
+StockFlow is a business-grade inventory and procurement platform — built to feel like a real internal tool, not a tutorial project. It handles the full lifecycle of stock management: from tracking products and suppliers to raising purchase orders and monitoring inventory levels through a clean, role-aware dashboard.
+
+The goal is to demonstrate production-level full-stack thinking: clean REST API design, relational data modeling, secure authentication, business workflow implementation, and a professional frontend — all in one cohesive codebase.
+
+---
+
+## Architecture
+
+```
+┌─────────────────────┐         ┌──────────────────────────┐         ┌─────────────┐
+│   React Frontend    │──HTTP──▶│   Spring Boot Backend    │──JPA───▶│  PostgreSQL │
+│  TypeScript/Tailwind│◀──JSON──│  REST API + Spring Sec.  │         │  Database   │
+└─────────────────────┘         └──────────────────────────┘         └─────────────┘
+```
+
+**Backend layers:**
+```
+Controller  →  Service  →  Repository  →  Entity  →  PostgreSQL
+(HTTP/JSON)    (Logic)     (Data access)  (DB map)
+```
 
 ---
 
 ## Tech Stack
 
-### Frontend
-- React
-- Tailwind CSS
-- JavaScript / TypeScript
-
-### Backend
-- Java
-- Spring Boot
-- Spring Security
-- Spring Data JPA
-
-### Database
-- PostgreSQL
-
-### Tools
-- Git & GitHub
-- Maven
-- Docker
-- Postman
+| Layer | Technology |
+|---|---|
+| Frontend | React 18, TypeScript, Tailwind CSS, Vite |
+| Backend | Java 17, Spring Boot 3.5, Spring Security, Spring Data JPA |
+| Database | PostgreSQL 15 |
+| Auth | JWT (JSON Web Tokens) |
+| Build | Maven |
+| DevOps | Docker, Docker Compose, GitHub Actions |
+| Testing | JUnit 5, Postman |
 
 ---
 
-## Project Goal
+## Features
 
-The goal of StockFlow is to simulate a real-world business application and demonstrate strong full-stack development skills, including:
-
-- REST API design
-- relational database modeling
-- secure authentication
-- clean frontend architecture
-- business workflow implementation
-- scalable project structure
-
-This project is being built with a portfolio-first mindset to reflect the type of full-stack applications used in real companies.
-
----
-
-## Core Modules
-
-### 1. Product Management
-Manage product records with key inventory details such as:
-- name
-- SKU
-- category
-- stock quantity
-- reorder threshold
-- supplier association
-
-### 2. Supplier Management
-Track supplier information and connect suppliers to products.
-
-### 3. Inventory Tracking
-Monitor stock levels and manage stock updates through incoming orders.
-
-### 4. Purchase Orders
-Create and manage purchase orders with status-based workflows such as:
-- Draft
-- Submitted
-- Approved
-- Rejected
-- Received
-
-### 5. Authentication & Roles
-Secure the application with authentication and role-based access:
-- Admin
-- Manager
-- Staff
-
-### 6. Dashboard & Analytics
-Provide business insights through:
-- total products
-- low-stock items
-- pending purchase orders
-- recent activity
-
-### 7. Audit Logs
-Track important actions performed inside the system for better visibility and accountability.
+| Module | Status |
+|---|---|
+| Product management (CRUD) | ✅ Done |
+| Supplier management | 🔨 In progress |
+| Product-supplier relationships | 🔨 In progress |
+| Search, filter, pagination | 📋 Planned |
+| JWT authentication | 📋 Planned |
+| Role-based access (Admin / Manager / Staff) | 📋 Planned |
+| Purchase order workflow | 📋 Planned |
+| Stock updates & inventory history | 📋 Planned |
+| Dashboard analytics | 📋 Planned |
+| Audit logs | 📋 Planned |
+| Docker + CI/CD pipeline | 📋 Planned |
 
 ---
 
-## Architecture Overview
+## Purchase Order Workflow
 
-StockFlow follows a classic full-stack architecture:
+```
+DRAFT  ──▶  SUBMITTED  ──▶  APPROVED  ──▶  RECEIVED
+                │
+                └──▶  REJECTED
+```
 
-- **React frontend** for the user interface
-- **Spring Boot backend** for business logic and REST APIs
-- **PostgreSQL database** for persistent data storage
+---
 
-### High-level flow
-`Frontend (React) -> REST API (Spring Boot) -> PostgreSQL`
+## Roles & Permissions
+
+| Action | Admin | Manager | Staff |
+|---|:---:|:---:|:---:|
+| View products & suppliers | ✅ | ✅ | ✅ |
+| Create / edit products | ✅ | ✅ | ❌ |
+| Manage suppliers | ✅ | ✅ | ❌ |
+| Create purchase orders | ✅ | ✅ | ✅ |
+| Approve / reject orders | ✅ | ✅ | ❌ |
+| View audit logs | ✅ | ❌ | ❌ |
+| Manage users | ✅ | ❌ | ❌ |
 
 ---
 
 ## Project Structure
 
-```bash
+```
 stockflow/
 ├── backend/
-│   ├── src/
-│   ├── pom.xml
-│   └── ...
+│   └── src/main/java/com/stockflow/
+│       ├── controller/        # REST endpoints
+│       ├── service/           # Business logic
+│       ├── repository/        # Data access (Spring Data JPA)
+│       ├── entity/            # Database models
+│       ├── dto/               # Request/response shapes
+│       └── security/          # JWT + Spring Security (planned)
 ├── frontend/
-│   ├── src/
-│   ├── package.json
-│   └── ...
-├── docs/
-│   ├── er-diagram.png
-│   ├── architecture.png
-│   └── ...
+│   └── src/
+│       ├── pages/             # Route-level components
+│       ├── components/        # Reusable UI components
+│       ├── services/          # API calls (axios)
+│       └── types/             # TypeScript interfaces
+├── docs/                      # Architecture diagrams
+├── docker-compose.yml
 └── README.md
+```
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- Java 17+
+- Node.js 18+
+- Docker & Docker Compose
+- Maven
+
+### 1. Clone the repo
+
+```bash
+git clone https://github.com/YOUR_USERNAME/stockflow.git
+cd stockflow
+```
+
+### 2. Start PostgreSQL
+
+```bash
+docker compose up -d
+```
+
+### 3. Start the backend
+
+```bash
+cd backend
+./mvnw spring-boot:run
+```
+
+Backend runs at `http://localhost:8080`
+
+### 4. Start the frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Frontend runs at `http://localhost:5173`
+
+---
+
+## API Endpoints
+
+### Products
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/products` | Get all products |
+| `GET` | `/api/products/{id}` | Get product by ID |
+| `POST` | `/api/products` | Create a product |
+| `PUT` | `/api/products/{id}` | Update a product |
+| `DELETE` | `/api/products/{id}` | Delete a product |
+
+---
+
+## Author
+
+Built by **YetAnotherFactsEnjoyer** — targeting full-stack roles in Singapore.
+
+[![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github&logoColor=white)](https://github.com/YetAnotherFactsEnjoyer)
+---
+
+<div align="center">
+<sub>Built with Java, Spring Boot, React, TypeScript, PostgreSQL, and Docker</sub>
+</div>
