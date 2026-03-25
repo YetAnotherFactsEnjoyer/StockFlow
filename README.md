@@ -189,7 +189,7 @@ Frontend runs at `http://localhost:5173`
 
 ## Author
 
-Built by **YetAnotherFactsEnjoyer** — targeting full-stack roles in Singapore.
+Built by **YetAnotherFactsEnjoyer** —
 
 [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github&logoColor=white)](https://github.com/YetAnotherFactsEnjoyer)
 ---
