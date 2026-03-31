@@ -1,4 +1,4 @@
-package com.stockflow.dto;
+package com.stockflow.product.dto;
 
 import java.math.BigDecimal;
 

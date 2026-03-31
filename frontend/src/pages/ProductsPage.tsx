@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
 import type { Product } from '../types/product';
 import { productService } from '../services/productService';
+import ProductModal from '../components/ProductModal';
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showModal, setShowModal] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
   useEffect(() => {
     fetchProducts();
@@ -21,6 +24,21 @@ export default function ProductsPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleAdd = () => {
+    setEditingProduct(null);
+    setShowModal(true);
+  };
+
+  const handleEdit = (product: Product) => {
+    setEditingProduct(product);
+    setShowModal(true);
+  };
+
+  const handleClose = () => {
+    setShowModal(false);
+    setEditingProduct(null);
   };
 
   const handleDelete = async (id: number) => {
@@ -40,7 +58,10 @@ export default function ProductsPage() {
     <div className="p-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-semibold text-gray-800">Products</h1>
-        <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+        <button
+          onClick={handleAdd}
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+        >
           Add Product
         </button>
       </div>
@@ -77,7 +98,12 @@ export default function ProductsPage() {
                   </span>
                 </td>
                 <td className="px-6 py-4 flex gap-2">
-                  <button className="text-blue-600 hover:underline text-sm">Edit</button>
+                  <button
+                    onClick={() => handleEdit(product)}
+                    className="text-blue-600 hover:underline text-sm"
+                  >
+                    Edit
+                  </button>
                   <button
                     onClick={() => handleDelete(product.id)}
                     className="text-red-500 hover:underline text-sm"
@@ -96,6 +122,14 @@ export default function ProductsPage() {
           </div>
         )}
       </div>
+
+      {showModal && (
+        <ProductModal
+          product={editingProduct ?? undefined}
+          onClose={handleClose}
+          onSaved={fetchProducts}
+        />
+      )}
     </div>
   );
 }
