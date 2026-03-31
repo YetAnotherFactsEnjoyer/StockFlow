@@ -1,4 +1,4 @@
-package com.stockflow.entity;
+package com.stockflow.product.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -31,6 +31,7 @@ public class Product {
     private String name;
 
     @Size(max = 500)
+    @Column(length = 500)
     private String description;
 
     @NotBlank(message = "SKU is required")

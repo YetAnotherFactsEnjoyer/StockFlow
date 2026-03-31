@@ -1,4 +1,4 @@
-package com.stockflow.controller;
+package com.stockflow.product.controller;
 
 import java.util.List;
 import org.springframework.http.HttpStatus;
@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.stockflow.dto.ProductDTO;
-import com.stockflow.entity.Product;
-import com.stockflow.service.ProductService;
+import com.stockflow.product.dto.ProductDTO;
+import com.stockflow.product.entity.Product;
+import com.stockflow.product.service.ProductService;
 import jakarta.validation.Valid;
 
 @RestController
