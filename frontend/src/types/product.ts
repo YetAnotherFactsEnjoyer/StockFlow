@@ -5,6 +5,8 @@ export interface Product {
   sku: string;
   price: number;
   stockQuantity: number;
+  supplierId: number | null;
+  supplierName: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -15,4 +17,5 @@ export interface ProductDTO {
   sku: string;
   price: number;
   stockQuantity: number;
+  supplierId: number;
 }

@@ -48,6 +48,12 @@ export default function ProductDetailsModal({ product, onClose, onEdit }: Props)
 
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           <div className="rounded-2xl border border-neutral-800 bg-neutral-950/70 p-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-500">Supplier</p>
+            <p className="mt-2 text-lg font-semibold text-neutral-100">
+              {product.supplierName || 'No supplier assigned'}
+            </p>
+          </div>
+          <div className="rounded-2xl border border-neutral-800 bg-neutral-950/70 p-4">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-500">SKU</p>
             <p className="mt-2 font-mono text-lg text-neutral-100">{product.sku}</p>
           </div>

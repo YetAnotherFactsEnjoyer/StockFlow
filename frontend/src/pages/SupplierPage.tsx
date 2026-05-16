@@ -9,6 +9,7 @@ export default function SuppliersPage() {
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editingSupplier, setEditingSupplier] = useState<Supplier | null>(null);
   const [selectedSupplier, setSelectedSupplier] = useState<Supplier | null>(null);
@@ -59,11 +60,26 @@ export default function SuppliersPage() {
 
     try {
       await supplierService.delete(id);
-      setSuppliers(suppliers.filter(supplier => supplier.id !== id));
+      setSuppliers((currentSuppliers) =>
+        currentSuppliers.filter((supplier) => supplier.id !== id)
+      );
+      setSelectedSupplier(null);
     } catch (err) {
       setError('Failed to delete supplier');
     }
   };
+
+  const filteredSuppliers = suppliers.filter((supplier) => {
+    const search = searchTerm.toLowerCase();
+
+    return (
+      supplier.name.toLowerCase().includes(search) ||
+      (supplier.contactPerson ?? '').toLowerCase().includes(search) ||
+      (supplier.email ?? '').toLowerCase().includes(search) ||
+      (supplier.phone ?? '').toLowerCase().includes(search) ||
+      (supplier.address ?? '').toLowerCase().includes(search)
+    );
+  });
 
   if (loading) return <div className="px-8 py-10 text-sm text-neutral-400">Loading suppliers...</div>;
   if (error) return <div className="px-8 py-10 text-sm text-red-400">{error}</div>;
@@ -91,6 +107,16 @@ export default function SuppliersPage() {
         </button>
       </div>
 
+      <div className="mb-4">
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={(event) => setSearchTerm(event.target.value)}
+          placeholder="Search by name, contact, email, phone, or address..."
+          className="w-full rounded-lg border border-neutral-700 bg-neutral-950 px-4 py-2 text-sm text-neutral-100 placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+
       <div className="overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900/80 shadow-[0_24px_80px_rgba(0,0,0,0.45)] backdrop-blur">
         <div className="flex items-center gap-2 border-b border-neutral-800 bg-neutral-950/40 px-6 py-3 text-xs text-neutral-400">
           <span className="flex h-5 w-5 items-center justify-center rounded-full border border-blue-400/30 bg-blue-500/10 font-semibold text-blue-200">
@@ -110,7 +136,7 @@ export default function SuppliersPage() {
             </tr>
           </thead>
           <tbody>
-            {suppliers.map(supplier => (
+            {filteredSuppliers.map(supplier => (
               <tr
                 key={supplier.id}
                 onClick={() => handlePreview(supplier)}
@@ -148,9 +174,9 @@ export default function SuppliersPage() {
           </tbody>
         </table>
 
-        {suppliers.length === 0 && (
+        {filteredSuppliers.length === 0 && (
           <div className="py-12 text-center text-neutral-500">
-            No suppliers yet. Add your first one.
+            {searchTerm ? 'No suppliers match your search.' : 'No suppliers yet. Add your first one.'}
           </div>
         )}
       </div>

@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { Product } from '../types/product';
+import type { Supplier } from '../types/supplier';
 import { productService } from '../services/productService';
+import { supplierService } from '../services/supplierService';
 
 interface Props {
   product?: Product;
@@ -16,12 +18,30 @@ export default function ProductModal({ product, onClose, onSaved }: Props) {
     sku: product?.sku ?? '',
     price: product?.price ?? '',
     stockQuantity: product?.stockQuantity ?? '',
+    supplierId: product?.supplierId ? String(product.supplierId) : '',
   });
 
+  const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [loadingSuppliers, setLoadingSuppliers] = useState(true);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  useEffect(() => {
+    const fetchSuppliers = async () => {
+      try {
+        const data = await supplierService.getAll();
+        setSuppliers(data);
+      } catch (err) {
+        setError('Failed to load suppliers');
+      } finally {
+        setLoadingSuppliers(false);
+      }
+    };
+
+    fetchSuppliers();
+  }, []);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
@@ -36,6 +56,7 @@ export default function ProductModal({ product, onClose, onSaved }: Props) {
         sku: form.sku,
         price: parseFloat(form.price as string),
         stockQuantity: parseInt(form.stockQuantity as string),
+        supplierId: Number(form.supplierId),
       };
       if (product) {
         await productService.update(product.id, dto);
@@ -130,6 +151,27 @@ export default function ProductModal({ product, onClose, onSaved }: Props) {
                 className="w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm text-neutral-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
+          </div>
+
+          <div>
+            <label className="mb-1 block text-sm text-neutral-300">Supplier</label>
+            <select
+              name="supplierId"
+              value={form.supplierId}
+              onChange={handleChange}
+              required
+              disabled={loadingSuppliers}
+              className="w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm text-neutral-100 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-neutral-900 disabled:text-neutral-500"
+            >
+              <option value="">
+                {loadingSuppliers ? 'Loading suppliers...' : 'Select a supplier'}
+              </option>
+              {suppliers.map((supplier) => (
+                <option key={supplier.id} value={supplier.id}>
+                  {supplier.name}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="flex justify-end gap-2 pt-2">

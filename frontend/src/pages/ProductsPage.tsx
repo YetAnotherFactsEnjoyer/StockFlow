@@ -9,6 +9,7 @@ export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -72,6 +73,18 @@ export default function ProductsPage() {
     setSelectedProduct(null);
   };
 
+  const filteredProducts = products.filter((product) => {
+  const search = searchTerm.toLowerCase();
+
+  return (
+    product.name.toLowerCase().includes(search) ||
+    product.sku.toLowerCase().includes(search) ||
+    (product.description ?? '').toLowerCase().includes(search) ||
+    (product.supplierName ?? '').toLowerCase().includes(search)
+  );
+});
+  const displayedProducts = filteredProducts.slice(0, 5);
+
   if (loading) return <div className="px-8 py-10 text-sm text-neutral-400">Loading products...</div>;
   if (error) return <div className="px-8 py-10 text-sm text-red-400">{error}</div>;
 
@@ -98,6 +111,16 @@ export default function ProductsPage() {
         </button>
       </div>
 
+      <div className="mb-4">
+        <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search by name, SKU, description, or supplier..."
+            className="w-full border border-gray-200 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        </div>
+
       <div className="overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900/80 shadow-[0_24px_80px_rgba(0,0,0,0.45)] backdrop-blur">
         <div className="flex items-center gap-2 border-b border-neutral-800 bg-neutral-950/40 px-6 py-3 text-xs text-neutral-400">
           <span className="flex h-5 w-5 items-center justify-center rounded-full border border-blue-400/30 bg-blue-500/10 font-semibold text-blue-200">
@@ -109,6 +132,7 @@ export default function ProductsPage() {
           <thead>
             <tr className="border-b border-neutral-800 text-left text-xs uppercase tracking-[0.18em] text-neutral-500">
               <th className="px-6 py-4 font-medium">Name</th>
+              <th className="px-6 py-4 font-medium">Supplier</th>
               <th className="px-6 py-4 font-medium">SKU</th>
               <th className="px-6 py-4 font-medium">Price</th>
               <th className="px-6 py-4 font-medium">Stock</th>
@@ -116,7 +140,7 @@ export default function ProductsPage() {
             </tr>
           </thead>
           <tbody>
-            {products.map(product => (
+            {displayedProducts.map(product => (
               <tr
                 key={product.id}
                 onClick={() => handlePreview(product)}
@@ -126,6 +150,7 @@ export default function ProductsPage() {
                   <div className="font-medium text-neutral-100">{product.name}</div>
                   <div className="text-xs text-neutral-500">{product.description || 'No description'}</div>
                 </td>
+                <td className="px-6 py-4 text-neutral-300">{product.supplierName || 'No supplier'}</td>
                 <td className="px-6 py-4 font-mono text-neutral-300">{product.sku}</td>
                 <td className="px-6 py-4 text-neutral-100">${product.price.toFixed(2)}</td>
                 <td className="px-6 py-4">
@@ -166,7 +191,7 @@ export default function ProductsPage() {
           </tbody>
         </table>
 
-        {products.length === 0 && (
+        {displayedProducts.length === 0 && (
           <div className="py-12 text-center text-neutral-500">
             No products yet. Add your first one.
           </div>
