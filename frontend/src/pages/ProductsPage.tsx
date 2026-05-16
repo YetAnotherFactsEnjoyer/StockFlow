@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import type { Product } from '../types/product';
 import { productService } from '../services/productService';
 import ProductModal from '../components/ProductModal';
+import ProductDetailsModal from '../components/ProductDetailsModal';
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -9,6 +10,7 @@ export default function ProductsPage() {
   const [error, setError] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   useEffect(() => {
     fetchProducts();
@@ -32,6 +34,7 @@ export default function ProductsPage() {
   };
 
   const handleEdit = (product: Product) => {
+    setSelectedProduct(null);
     setEditingProduct(product);
     setShowModal(true);
   };
@@ -39,6 +42,14 @@ export default function ProductsPage() {
   const handleClose = () => {
     setShowModal(false);
     setEditingProduct(null);
+  };
+
+  const handlePreview = (product: Product) => {
+    setSelectedProduct(product);
+  };
+
+  const handleClosePreview = () => {
+    setSelectedProduct(null);
   };
 
   const handleDelete = async (id: number) => {
@@ -51,25 +62,34 @@ export default function ProductsPage() {
     }
   };
 
-  if (loading) return <div className="p-8 text-gray-500">Loading...</div>;
-  if (error) return <div className="p-8 text-red-500">{error}</div>;
+  if (loading) return <div className="px-8 py-10 text-sm text-neutral-400">Loading products...</div>;
+  if (error) return <div className="px-8 py-10 text-sm text-red-400">{error}</div>;
 
   return (
-    <div className="p-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold text-gray-800">Products</h1>
+    <section className="px-6 py-8 md:px-8">
+      <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-neutral-500">
+            Inventory
+          </p>
+          <h1 className="mt-2 text-3xl font-semibold text-neutral-100">Products</h1>
+          <p className="mt-2 text-sm text-neutral-400">
+            Track pricing, stock levels, and SKU details in one place.
+          </p>
+        </div>
         <button
           onClick={handleAdd}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+          className="inline-flex items-center gap-2 rounded-full border border-blue-400/30 bg-blue-500/15 px-5 py-2.5 text-sm font-semibold text-blue-100 transition hover:border-blue-300/50 hover:bg-blue-500/25"
         >
+          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-400/20 text-base leading-none">+</span>
           Add Product
         </button>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+      <div className="overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900/80 shadow-[0_24px_80px_rgba(0,0,0,0.45)] backdrop-blur">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-gray-200 text-left text-gray-500">
+            <tr className="border-b border-neutral-800 text-left text-xs uppercase tracking-[0.18em] text-neutral-500">
               <th className="px-6 py-4 font-medium">Name</th>
               <th className="px-6 py-4 font-medium">SKU</th>
               <th className="px-6 py-4 font-medium">Price</th>
@@ -79,35 +99,47 @@ export default function ProductsPage() {
           </thead>
           <tbody>
             {products.map(product => (
-              <tr key={product.id} className="border-b border-gray-100 hover:bg-gray-50">
+              <tr
+                key={product.id}
+                onClick={() => handlePreview(product)}
+                className="cursor-pointer border-b border-neutral-800/80 transition hover:bg-neutral-800/70"
+              >
                 <td className="px-6 py-4">
-                  <div className="font-medium text-gray-800">{product.name}</div>
-                  <div className="text-gray-400 text-xs">{product.description}</div>
+                  <div className="font-medium text-neutral-100">{product.name}</div>
+                  <div className="text-xs text-neutral-500">{product.description || 'No description'}</div>
                 </td>
-                <td className="px-6 py-4 text-gray-600 font-mono">{product.sku}</td>
-                <td className="px-6 py-4 text-gray-800">${product.price.toFixed(2)}</td>
+                <td className="px-6 py-4 font-mono text-neutral-300">{product.sku}</td>
+                <td className="px-6 py-4 text-neutral-100">${product.price.toFixed(2)}</td>
                 <td className="px-6 py-4">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                  <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${
                     product.stockQuantity === 0
-                      ? 'bg-red-100 text-red-700'
+                      ? 'bg-red-500/15 text-red-300'
                       : product.stockQuantity < 5
-                      ? 'bg-yellow-100 text-yellow-700'
-                      : 'bg-green-100 text-green-700'
+                      ? 'bg-amber-500/15 text-amber-300'
+                      : 'bg-emerald-500/15 text-emerald-300'
                   }`}>
                     {product.stockQuantity} in stock
                   </span>
                 </td>
                 <td className="px-6 py-4 flex gap-2">
                   <button
-                    onClick={() => handleEdit(product)}
-                    className="text-blue-600 hover:underline text-sm"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      handleEdit(product);
+                    }}
+                    className="inline-flex items-center gap-2 rounded-full border border-neutral-700 bg-neutral-800 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-neutral-200 transition hover:border-blue-400/40 hover:bg-blue-500/10 hover:text-blue-200"
                   >
+                    <span className="text-sm leading-none">✦</span>
                     Edit
                   </button>
                   <button
-                    onClick={() => handleDelete(product.id)}
-                    className="text-red-500 hover:underline text-sm"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      handleDelete(product.id);
+                    }}
+                    className="inline-flex items-center gap-2 rounded-full border border-neutral-700 bg-neutral-800 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-neutral-200 transition hover:border-red-400/40 hover:bg-red-500/10 hover:text-red-200"
                   >
+                    <span className="text-sm leading-none">×</span>
                     Delete
                   </button>
                 </td>
@@ -117,7 +149,7 @@ export default function ProductsPage() {
         </table>
 
         {products.length === 0 && (
-          <div className="text-center py-12 text-gray-400">
+          <div className="py-12 text-center text-neutral-500">
             No products yet. Add your first one.
           </div>
         )}
@@ -130,6 +162,14 @@ export default function ProductsPage() {
           onSaved={fetchProducts}
         />
       )}
-    </div>
+
+      {selectedProduct && !showModal && (
+        <ProductDetailsModal
+          product={selectedProduct}
+          onClose={handleClosePreview}
+          onEdit={handleEdit}
+        />
+      )}
+    </section>
   );
 }

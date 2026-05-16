@@ -1,18 +1,49 @@
 package com.stockflow.product.service;
 
-import java.util.List;
-import com.stockflow.product.dto.ProductDTO;
 import com.stockflow.product.entity.Product;
+import com.stockflow.product.repository.ProductRepository;
+import org.springframework.stereotype.Service;
 
-public interface ProductService {
+import java.util.List;
 
-    List<Product> getAllProducts();
+@Service
+public class ProductService {
 
-    Product getProductById(Long id);
+    private final ProductRepository productRepository;
 
-    Product createProduct(ProductDTO dto);
+    public ProductService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
 
-    Product updateProduct(Long id, ProductDTO dto);
+    public List<Product> getAllProducts() {
+        return productRepository.findAll();
+    }
 
-    void deleteProduct(Long id);
+    public Product getProductById(Long id) {
+        return productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+    }
+
+    public Product createProduct(Product product) {
+        return productRepository.save(product);
+    }
+
+    public Product updateProduct(Long id, Product updatedProduct) {
+        Product existingProduct = getProductById(id);
+
+        existingProduct.updateDetails(
+                updatedProduct.getName(),
+                updatedProduct.getDescription(),
+                updatedProduct.getSku(),
+                updatedProduct.getPrice(),
+                updatedProduct.getStockQuantity()
+        );
+
+        return productRepository.save(existingProduct);
+    }
+
+    public void deleteProduct(Long id) {
+        Product existingProduct = getProductById(id);
+        productRepository.delete(existingProduct);
+    }
 }
