@@ -52,15 +52,15 @@ export default function ProductModal({ product, onClose, onSaved }: Props) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl shadow-lg w-full max-w-md p-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 backdrop-blur-sm">
+      <div className="w-full max-w-md rounded-2xl border border-neutral-800 bg-neutral-900 p-6 shadow-[0_30px_80px_rgba(0,0,0,0.55)]">
 
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">
+        <h2 className="mb-4 text-lg font-semibold text-neutral-100">
           {product ? 'Edit Product' : 'Add Product'}
         </h2>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-50 text-red-600 rounded-lg text-sm">
+          <div className="mb-4 rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-300">
             {error}
           </div>
         )}
@@ -68,45 +68,45 @@ export default function ProductModal({ product, onClose, onSaved }: Props) {
         <form onSubmit={handleSubmit} className="space-y-4">
 
           <div>
-            <label className="block text-sm text-gray-600 mb-1">Name</label>
+            <label className="mb-1 block text-sm text-neutral-300">Name</label>
             <input
               name="name"
               value={form.name}
               onChange={handleChange}
               required
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm text-neutral-100 placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
           <div>
-            <label className="block text-sm text-gray-600 mb-1">Description</label>
+            <label className="mb-1 block text-sm text-neutral-300">Description</label>
             <textarea
               name="description"
               value={form.description}
               onChange={handleChange}
               rows={2}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm text-neutral-100 placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
           <div>
-            <label className="block text-sm text-gray-600 mb-1">SKU</label>
+            <label className="mb-1 block text-sm text-neutral-300">SKU</label>
             <input
               name="sku"
               value={form.sku}
               onChange={handleChange}
               required
               disabled={!!product}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-50 disabled:text-gray-400"
+              className="w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm text-neutral-100 placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-neutral-900 disabled:text-neutral-500"
             />
             {product && (
-              <p className="text-xs text-gray-400 mt-1">SKU cannot be changed</p>
+              <p className="mt-1 text-xs text-neutral-500">SKU cannot be changed</p>
             )}
           </div>
 
           <div className="flex gap-3">
             <div className="flex-1">
-              <label className="block text-sm text-gray-600 mb-1">Price</label>
+              <label className="mb-1 block text-sm text-neutral-300">Price</label>
               <input
                 name="price"
                 type="number"
@@ -115,11 +115,11 @@ export default function ProductModal({ product, onClose, onSaved }: Props) {
                 value={form.price}
                 onChange={handleChange}
                 required
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm text-neutral-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div className="flex-1">
-              <label className="block text-sm text-gray-600 mb-1">Stock</label>
+              <label className="mb-1 block text-sm text-neutral-300">Stock</label>
               <input
                 name="stockQuantity"
                 type="number"
@@ -127,7 +127,7 @@ export default function ProductModal({ product, onClose, onSaved }: Props) {
                 value={form.stockQuantity}
                 onChange={handleChange}
                 required
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm text-neutral-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>
@@ -136,14 +136,14 @@ export default function ProductModal({ product, onClose, onSaved }: Props) {
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800"
+              className="px-4 py-2 text-sm text-neutral-400 transition hover:text-neutral-200"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+              className="rounded-lg bg-blue-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-400 disabled:opacity-50"
             >
               {saving ? 'Saving...' : product ? 'Save Changes' : 'Add Product'}
             </button>
