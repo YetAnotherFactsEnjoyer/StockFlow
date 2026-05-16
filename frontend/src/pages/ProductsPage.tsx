@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { FiEdit3, FiPlus, FiTrash2 } from 'react-icons/fi';
 import type { Product } from '../types/product';
 import { productService } from '../services/productService';
 import ProductModal from '../components/ProductModal';
@@ -39,6 +40,25 @@ export default function ProductsPage() {
     setShowModal(true);
   };
 
+
+  const handleDelete = async (id: number) => {
+    const confirmed = confirm('Delete this product?');
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      await productService.delete(id);
+      setProducts((currentProducts) =>
+        currentProducts.filter((product) => product.id !== id)
+      );
+      setSelectedProduct(null);
+    } catch (err) {
+      setError('Failed to delete product');
+    }
+  };
+
   const handleClose = () => {
     setShowModal(false);
     setEditingProduct(null);
@@ -50,16 +70,6 @@ export default function ProductsPage() {
 
   const handleClosePreview = () => {
     setSelectedProduct(null);
-  };
-
-  const handleDelete = async (id: number) => {
-    if (!confirm('Delete this product?')) return;
-    try {
-      await productService.delete(id);
-      setProducts(products.filter(p => p.id !== id));
-    } catch (err) {
-      setError('Failed to delete product');
-    }
   };
 
   if (loading) return <div className="px-8 py-10 text-sm text-neutral-400">Loading products...</div>;
@@ -81,12 +91,20 @@ export default function ProductsPage() {
           onClick={handleAdd}
           className="inline-flex items-center gap-2 rounded-full border border-blue-400/30 bg-blue-500/15 px-5 py-2.5 text-sm font-semibold text-blue-100 transition hover:border-blue-300/50 hover:bg-blue-500/25"
         >
-          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-400/20 text-base leading-none">+</span>
+          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-400/20">
+            <FiPlus className="h-4 w-4" aria-hidden="true" />
+          </span>
           Add Product
         </button>
       </div>
 
       <div className="overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900/80 shadow-[0_24px_80px_rgba(0,0,0,0.45)] backdrop-blur">
+        <div className="flex items-center gap-2 border-b border-neutral-800 bg-neutral-950/40 px-6 py-3 text-xs text-neutral-400">
+          <span className="flex h-5 w-5 items-center justify-center rounded-full border border-blue-400/30 bg-blue-500/10 font-semibold text-blue-200">
+            !
+          </span>
+          Click a product row to open its detail popup.
+        </div>
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-neutral-800 text-left text-xs uppercase tracking-[0.18em] text-neutral-500">
@@ -129,7 +147,7 @@ export default function ProductsPage() {
                     }}
                     className="inline-flex items-center gap-2 rounded-full border border-neutral-700 bg-neutral-800 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-neutral-200 transition hover:border-blue-400/40 hover:bg-blue-500/10 hover:text-blue-200"
                   >
-                    <span className="text-sm leading-none">✦</span>
+                    <FiEdit3 className="h-3.5 w-3.5" aria-hidden="true" />
                     Edit
                   </button>
                   <button
@@ -139,7 +157,7 @@ export default function ProductsPage() {
                     }}
                     className="inline-flex items-center gap-2 rounded-full border border-neutral-700 bg-neutral-800 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-neutral-200 transition hover:border-red-400/40 hover:bg-red-500/10 hover:text-red-200"
                   >
-                    <span className="text-sm leading-none">×</span>
+                    <FiTrash2 className="h-3.5 w-3.5" aria-hidden="true" />
                     Delete
                   </button>
                 </td>

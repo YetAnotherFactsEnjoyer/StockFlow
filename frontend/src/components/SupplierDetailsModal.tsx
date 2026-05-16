@@ -1,3 +1,4 @@
+import { FiEdit3 } from 'react-icons/fi';
 import type { Supplier } from '../types/supplier';
 
 interface Props {
@@ -51,7 +52,7 @@ export default function SupplierDetailsModal({ supplier, onClose, onEdit }: Prop
             onClick={() => onEdit(supplier)}
             className="inline-flex items-center gap-2 rounded-full border border-blue-400/30 bg-blue-500/15 px-5 py-2.5 text-sm font-semibold text-blue-100 transition hover:border-blue-300/50 hover:bg-blue-500/25"
           >
-            <span className="text-sm leading-none">✦</span>
+            <FiEdit3 className="h-4 w-4" aria-hidden="true" />
             Edit Supplier
           </button>
         </div>
