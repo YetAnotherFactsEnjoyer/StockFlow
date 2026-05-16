@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { FiEdit3, FiPlus, FiTrash2 } from 'react-icons/fi';
+import { FiAlertTriangle, FiBox, FiEdit3, FiInfo, FiPlus, FiSearch, FiTrash2 } from 'react-icons/fi';
 import type { Product } from '../types/product';
 import { productService } from '../services/productService';
 import ProductModal from '../components/ProductModal';
@@ -84,51 +84,80 @@ export default function ProductsPage() {
   );
 });
   const displayedProducts = filteredProducts.slice(0, 5);
+  const lowStockCount = products.filter((product) => product.stockQuantity < 5).length;
+  const outOfStockCount = products.filter((product) => product.stockQuantity === 0).length;
 
-  if (loading) return <div className="px-8 py-10 text-sm text-neutral-400">Loading products...</div>;
-  if (error) return <div className="px-8 py-10 text-sm text-red-400">{error}</div>;
+  if (loading) return <div className="rounded-lg border border-neutral-800 bg-neutral-900 px-6 py-8 text-sm text-neutral-400">Loading products...</div>;
+  if (error) return <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-6 py-8 text-sm text-red-300">{error}</div>;
 
   return (
-    <section className="px-6 py-8 md:px-8">
-      <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+    <section className="space-y-4">
+      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-neutral-500">
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-emerald-300">
             Inventory
           </p>
-          <h1 className="mt-2 text-3xl font-semibold text-neutral-100">Products</h1>
-          <p className="mt-2 text-sm text-neutral-400">
+          <h2 className="mt-2 text-2xl font-semibold text-white">Products</h2>
+          <p className="mt-1 text-sm text-neutral-400">
             Track pricing, stock levels, and SKU details in one place.
           </p>
         </div>
         <button
           onClick={handleAdd}
-          className="inline-flex items-center gap-2 rounded-full border border-blue-400/30 bg-blue-500/15 px-5 py-2.5 text-sm font-semibold text-blue-100 transition hover:border-blue-300/50 hover:bg-blue-500/25"
+          className="inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-400 px-4 py-2.5 text-sm font-semibold text-neutral-950 transition hover:bg-emerald-300"
         >
-          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-400/20">
-            <FiPlus className="h-4 w-4" aria-hidden="true" />
-          </span>
+          <FiPlus className="h-4 w-4" aria-hidden="true" />
           Add Product
         </button>
       </div>
 
-      <div className="mb-4">
-        <input
+      <div className="grid gap-3 md:grid-cols-3">
+        <div className="rounded-lg border border-neutral-800 bg-neutral-900 px-4 py-3">
+          <div className="flex items-center justify-between text-sm text-neutral-400">
+            Total products
+            <FiBox className="h-4 w-4 text-emerald-300" aria-hidden="true" />
+          </div>
+          <p className="mt-2 text-2xl font-semibold text-white">{products.length}</p>
+        </div>
+        <div className="rounded-lg border border-neutral-800 bg-neutral-900 px-4 py-3">
+          <div className="flex items-center justify-between text-sm text-neutral-400">
+            Low stock
+            <FiAlertTriangle className="h-4 w-4 text-amber-300" aria-hidden="true" />
+          </div>
+          <p className="mt-2 text-2xl font-semibold text-white">{lowStockCount}</p>
+        </div>
+        <div className="rounded-lg border border-neutral-800 bg-neutral-900 px-4 py-3">
+          <div className="flex items-center justify-between text-sm text-neutral-400">
+            Out of stock
+            <FiAlertTriangle className="h-4 w-4 text-red-300" aria-hidden="true" />
+          </div>
+          <p className="mt-2 text-2xl font-semibold text-white">{outOfStockCount}</p>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-3 rounded-lg border border-neutral-800 bg-neutral-900 p-3 md:flex-row md:items-center md:justify-between">
+        <label className="relative block w-full md:max-w-xl">
+          <FiSearch className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-500" aria-hidden="true" />
+          <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search by name, SKU, description, or supplier..."
-            className="w-full border border-gray-200 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        </div>
+            className="w-full rounded-lg border border-neutral-700 bg-neutral-950 py-2.5 pl-10 pr-4 text-sm text-neutral-100 placeholder:text-neutral-500 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/20"
+          />
+        </label>
+        <p className="text-sm text-neutral-400">
+          Showing {displayedProducts.length} of {filteredProducts.length} matches
+        </p>
+      </div>
 
-      <div className="overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-900/80 shadow-[0_24px_80px_rgba(0,0,0,0.45)] backdrop-blur">
-        <div className="flex items-center gap-2 border-b border-neutral-800 bg-neutral-950/40 px-6 py-3 text-xs text-neutral-400">
-          <span className="flex h-5 w-5 items-center justify-center rounded-full border border-blue-400/30 bg-blue-500/10 font-semibold text-blue-200">
-            !
-          </span>
-          Click a product row to open its detail popup.
+      <div className="overflow-hidden rounded-lg border border-neutral-800 bg-neutral-900 shadow-[0_18px_60px_rgba(0,0,0,0.35)]">
+        <div className="flex items-center gap-2 border-b border-neutral-800 bg-neutral-950/60 px-4 py-3 text-xs text-neutral-400">
+          <FiInfo className="h-4 w-4 text-emerald-300" aria-hidden="true" />
+          Click a row to open product details.
         </div>
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[880px] text-sm">
           <thead>
             <tr className="border-b border-neutral-800 text-left text-xs uppercase tracking-[0.18em] text-neutral-500">
               <th className="px-6 py-4 font-medium">Name</th>
@@ -189,13 +218,14 @@ export default function ProductsPage() {
               </tr>
             ))}
           </tbody>
-        </table>
+          </table>
 
-        {displayedProducts.length === 0 && (
-          <div className="py-12 text-center text-neutral-500">
-            No products yet. Add your first one.
-          </div>
-        )}
+          {displayedProducts.length === 0 && (
+            <div className="py-12 text-center text-neutral-500">
+              {searchTerm ? 'No products match your search.' : 'No products yet. Add your first one.'}
+            </div>
+          )}
+        </div>
       </div>
 
       {showModal && (
