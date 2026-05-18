@@ -4,8 +4,10 @@ import type { Supplier } from '../types/supplier';
 const BASE_URL = '/suppliers';
 
 export const supplierService = {
-  async getAll(): Promise<Supplier[]> {
-    const response = await api.get(BASE_URL);
+  async getAll(search?: string): Promise<Supplier[]> {
+    const response = await api.get(BASE_URL, {
+      params: search ? { search } : {},
+    });
     return response.data;
   },
 

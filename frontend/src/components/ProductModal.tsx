@@ -10,6 +10,25 @@ interface Props {
   onSaved: () => void;
 }
 
+function getErrorMessage(error: unknown) {
+  if (
+    typeof error === 'object' &&
+    error !== null &&
+    'response' in error &&
+    typeof error.response === 'object' &&
+    error.response !== null &&
+    'data' in error.response &&
+    typeof error.response.data === 'object' &&
+    error.response.data !== null &&
+    'message' in error.response.data &&
+    typeof error.response.data.message === 'string'
+  ) {
+    return error.response.data.message;
+  }
+
+  return 'Something went wrong';
+}
+
 export default function ProductModal({ product, onClose, onSaved }: Props) {
 
   const [form, setForm] = useState({
@@ -31,7 +50,7 @@ export default function ProductModal({ product, onClose, onSaved }: Props) {
       try {
         const data = await supplierService.getAll();
         setSuppliers(data);
-      } catch (err) {
+      } catch {
         setError('Failed to load suppliers');
       } finally {
         setLoadingSuppliers(false);
@@ -65,8 +84,8 @@ export default function ProductModal({ product, onClose, onSaved }: Props) {
       }
       onSaved();
       onClose();
-    } catch (err: any) {
-      setError(err.response?.data?.message ?? 'Something went wrong');
+    } catch (err) {
+      setError(getErrorMessage(err));
     } finally {
       setSaving(false);
     }

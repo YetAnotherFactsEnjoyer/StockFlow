@@ -1,5 +1,9 @@
 package com.stockflow.product.service;
 
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
 import com.stockflow.product.dto.ProductRequest;
 import com.stockflow.product.dto.ProductResponse;
 import com.stockflow.product.entity.Product;
@@ -7,9 +11,6 @@ import com.stockflow.product.mapper.ProductMapper;
 import com.stockflow.product.repository.ProductRepository;
 import com.stockflow.supplier.entity.Supplier;
 import com.stockflow.supplier.repository.SupplierRepository;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class ProductService {
@@ -25,9 +26,20 @@ public class ProductService {
         this.supplierRepository = supplierRepository;
     }
 
-    public List<ProductResponse> getAllProducts() {
-        return productRepository.findAll()
-                .stream()
+    public List<ProductResponse> getAllProducts(String search) {
+        List<Product> products;
+        if (search == null || search.isBlank()) {
+            products = productRepository.findAll();
+        } else {
+            products = productRepository
+                    .findByNameContainingIgnoreCaseOrSkuContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
+                            search,
+                            search,
+                            search
+                    );
+        }
+
+        return products.stream()
                 .map(ProductMapper::toResponse)
                 .toList();
     }

@@ -1,13 +1,13 @@
 package com.stockflow.supplier.service;
 
+import java.util.List;
+
 import com.stockflow.supplier.dto.SupplierRequest;
 import com.stockflow.supplier.dto.SupplierResponse;
 
-import java.util.List;
-
 public interface SupplierService {
 
-    List<SupplierResponse> getAllSuppliers();
+    List<SupplierResponse> getAllSuppliers(String search);
 
     SupplierResponse getSupplierById(Long id);
 
