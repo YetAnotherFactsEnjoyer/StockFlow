@@ -24,11 +24,21 @@ public class SupplierServiceImpl implements SupplierService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<SupplierResponse> getAllSuppliers() {
+    public List<SupplierResponse> getAllSuppliers(String search) {
         log.debug("Fetching all suppliers");
 
-        return supplierRepository.findAll()
-                .stream()
+        List<Supplier> suppliers = search == null || search.isBlank()
+                ? supplierRepository.findAll()
+                : supplierRepository
+                        .findByNameContainingIgnoreCaseOrContactPersonContainingIgnoreCaseOrEmailContainingIgnoreCaseOrPhoneContainingIgnoreCaseOrAddressContainingIgnoreCase(
+                                search,
+                                search,
+                                search,
+                                search,
+                                search
+                        );
+
+        return suppliers.stream()
                 .map(SupplierMapper::toResponse)
                 .toList();
     }

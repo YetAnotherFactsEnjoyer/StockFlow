@@ -8,6 +8,25 @@ interface Props {
   onSaved: () => void;
 }
 
+function getErrorMessage(error: unknown) {
+  if (
+    typeof error === 'object' &&
+    error !== null &&
+    'response' in error &&
+    typeof error.response === 'object' &&
+    error.response !== null &&
+    'data' in error.response &&
+    typeof error.response.data === 'object' &&
+    error.response.data !== null &&
+    'message' in error.response.data &&
+    typeof error.response.data.message === 'string'
+  ) {
+    return error.response.data.message;
+  }
+
+  return 'Something went wrong';
+}
+
 export default function SupplierModal({ supplier, onClose, onSaved }: Props) {
   const [form, setForm] = useState({
     name: supplier?.name ?? '',
@@ -40,8 +59,8 @@ export default function SupplierModal({ supplier, onClose, onSaved }: Props) {
 
       onSaved();
       onClose();
-    } catch (err: any) {
-      setError(err.response?.data?.message ?? 'Something went wrong');
+    } catch (err) {
+      setError(getErrorMessage(err));
     } finally {
       setSaving(false);
     }
@@ -49,18 +68,21 @@ export default function SupplierModal({ supplier, onClose, onSaved }: Props) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 backdrop-blur-sm">
-      <div className="w-full max-w-md rounded-2xl border border-neutral-800 bg-neutral-900 p-6 shadow-[0_30px_80px_rgba(0,0,0,0.55)]">
-        <h2 className="mb-4 text-lg font-semibold text-neutral-100">
-          {supplier ? 'Edit Supplier' : 'Add Supplier'}
-        </h2>
+      <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-lg border border-neutral-800 bg-neutral-900 shadow-[0_30px_80px_rgba(0,0,0,0.55)]">
+        <div className="border-b border-neutral-800 px-6 py-5">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-300">Supplier</p>
+          <h2 className="mt-1 text-xl font-semibold text-neutral-100">
+            {supplier ? 'Edit Supplier' : 'Add Supplier'}
+          </h2>
+        </div>
 
         {error && (
-          <div className="mb-4 rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-300">
+          <div className="mx-6 mt-5 rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-300">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 p-6">
           <div>
             <label className="mb-1 block text-sm text-neutral-300">Name</label>
             <input
@@ -118,14 +140,14 @@ export default function SupplierModal({ supplier, onClose, onSaved }: Props) {
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm text-neutral-400 transition hover:text-neutral-200"
+              className="rounded-lg px-4 py-2 text-sm text-neutral-400 transition hover:bg-neutral-800 hover:text-neutral-200"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="rounded-lg bg-blue-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-400 disabled:opacity-50"
+              className="rounded-lg bg-cyan-300 px-4 py-2 text-sm font-semibold text-neutral-950 transition hover:bg-cyan-200 disabled:opacity-50"
             >
               {saving ? 'Saving...' : supplier ? 'Save Changes' : 'Add Supplier'}
             </button>

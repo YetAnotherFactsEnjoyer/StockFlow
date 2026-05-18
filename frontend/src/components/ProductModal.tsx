@@ -1,11 +1,32 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { Product } from '../types/product';
+import type { Supplier } from '../types/supplier';
 import { productService } from '../services/productService';
+import { supplierService } from '../services/supplierService';
 
 interface Props {
   product?: Product;
   onClose: () => void;
   onSaved: () => void;
+}
+
+function getErrorMessage(error: unknown) {
+  if (
+    typeof error === 'object' &&
+    error !== null &&
+    'response' in error &&
+    typeof error.response === 'object' &&
+    error.response !== null &&
+    'data' in error.response &&
+    typeof error.response.data === 'object' &&
+    error.response.data !== null &&
+    'message' in error.response.data &&
+    typeof error.response.data.message === 'string'
+  ) {
+    return error.response.data.message;
+  }
+
+  return 'Something went wrong';
 }
 
 export default function ProductModal({ product, onClose, onSaved }: Props) {
@@ -16,12 +37,30 @@ export default function ProductModal({ product, onClose, onSaved }: Props) {
     sku: product?.sku ?? '',
     price: product?.price ?? '',
     stockQuantity: product?.stockQuantity ?? '',
+    supplierId: product?.supplierId ? String(product.supplierId) : '',
   });
 
+  const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [loadingSuppliers, setLoadingSuppliers] = useState(true);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  useEffect(() => {
+    const fetchSuppliers = async () => {
+      try {
+        const data = await supplierService.getAll();
+        setSuppliers(data);
+      } catch {
+        setError('Failed to load suppliers');
+      } finally {
+        setLoadingSuppliers(false);
+      }
+    };
+
+    fetchSuppliers();
+  }, []);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
@@ -36,6 +75,7 @@ export default function ProductModal({ product, onClose, onSaved }: Props) {
         sku: form.sku,
         price: parseFloat(form.price as string),
         stockQuantity: parseInt(form.stockQuantity as string),
+        supplierId: Number(form.supplierId),
       };
       if (product) {
         await productService.update(product.id, dto);
@@ -44,8 +84,8 @@ export default function ProductModal({ product, onClose, onSaved }: Props) {
       }
       onSaved();
       onClose();
-    } catch (err: any) {
-      setError(err.response?.data?.message ?? 'Something went wrong');
+    } catch (err) {
+      setError(getErrorMessage(err));
     } finally {
       setSaving(false);
     }
@@ -53,19 +93,22 @@ export default function ProductModal({ product, onClose, onSaved }: Props) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 backdrop-blur-sm">
-      <div className="w-full max-w-md rounded-2xl border border-neutral-800 bg-neutral-900 p-6 shadow-[0_30px_80px_rgba(0,0,0,0.55)]">
+      <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-lg border border-neutral-800 bg-neutral-900 shadow-[0_30px_80px_rgba(0,0,0,0.55)]">
 
-        <h2 className="mb-4 text-lg font-semibold text-neutral-100">
-          {product ? 'Edit Product' : 'Add Product'}
-        </h2>
+        <div className="border-b border-neutral-800 px-6 py-5">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-300">Product</p>
+          <h2 className="mt-1 text-xl font-semibold text-neutral-100">
+            {product ? 'Edit Product' : 'Add Product'}
+          </h2>
+        </div>
 
         {error && (
-          <div className="mb-4 rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-300">
+          <div className="mx-6 mt-5 rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-300">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 p-6">
 
           <div>
             <label className="mb-1 block text-sm text-neutral-300">Name</label>
@@ -132,18 +175,39 @@ export default function ProductModal({ product, onClose, onSaved }: Props) {
             </div>
           </div>
 
+          <div>
+            <label className="mb-1 block text-sm text-neutral-300">Supplier</label>
+            <select
+              name="supplierId"
+              value={form.supplierId}
+              onChange={handleChange}
+              required
+              disabled={loadingSuppliers}
+              className="w-full rounded-lg border border-neutral-700 bg-neutral-950 px-3 py-2 text-sm text-neutral-100 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-neutral-900 disabled:text-neutral-500"
+            >
+              <option value="">
+                {loadingSuppliers ? 'Loading suppliers...' : 'Select a supplier'}
+              </option>
+              {suppliers.map((supplier) => (
+                <option key={supplier.id} value={supplier.id}>
+                  {supplier.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <div className="flex justify-end gap-2 pt-2">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm text-neutral-400 transition hover:text-neutral-200"
+              className="rounded-lg px-4 py-2 text-sm text-neutral-400 transition hover:bg-neutral-800 hover:text-neutral-200"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="rounded-lg bg-blue-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-400 disabled:opacity-50"
+              className="rounded-lg bg-emerald-400 px-4 py-2 text-sm font-semibold text-neutral-950 transition hover:bg-emerald-300 disabled:opacity-50"
             >
               {saving ? 'Saving...' : product ? 'Save Changes' : 'Add Product'}
             </button>
