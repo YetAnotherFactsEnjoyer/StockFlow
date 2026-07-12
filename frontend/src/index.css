@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --font-sans:
     Inter,
@@ -10,14 +12,14 @@
     "Segoe UI",
     sans-serif;
 
-  --color-brand-50: #eef2ff;
+  --color-brand-50: color-mix(in srgb, var(--workspace-primary, #2457d6) 8%, white);
   --color-brand-100: #e0e7ff;
   --color-brand-200: #c7d2fe;
   --color-brand-300: #a5b4fc;
   --color-brand-400: #818cf8;
-  --color-brand-500: #6366f1;
-  --color-brand-600: #4f46e5;
-  --color-brand-700: #4338ca;
+  --color-brand-500: var(--workspace-primary, #2457d6);
+  --color-brand-600: color-mix(in srgb, var(--workspace-primary, #2457d6) 88%, black);
+  --color-brand-700: color-mix(in srgb, var(--workspace-primary, #2457d6) 74%, black);
   --color-brand-800: #3730a3;
   --color-brand-900: #312e81;
 
@@ -39,9 +41,10 @@
   --color-text-primary: #172033;
   --color-text-secondary: #667085;
   --color-border-subtle: #d8dee8;
-  --color-brand-default: #2457d6;
-  --color-brand-hover: #1d47b5;
-  --color-brand-soft: #e8eefc;
+  --color-brand-default: var(--workspace-primary, #2457d6);
+  --color-brand-hover: color-mix(in srgb, var(--workspace-primary, #2457d6) 82%, black);
+  --color-brand-soft: color-mix(in srgb, var(--workspace-primary, #2457d6) 10%, white);
+  --color-accent-default: var(--workspace-accent, #11b8b2);
   --color-success: #25845a;
   --color-warning: #b7791f;
   --color-danger: #c43d4b;
@@ -52,17 +55,32 @@
 }
 
 @layer base {
+  :root {
+    --workspace-primary: #2457d6;
+    --workspace-accent: #11b8b2;
+  }
+
+  :root.dark {
+    --color-app-bg: #0d1015;
+    --color-surface: #181d25;
+    --color-surface-secondary: #202630;
+    --color-text-primary: #f7f8fa;
+    --color-text-secondary: #9aa4b2;
+    --color-border-subtle: #303743;
+    --color-brand-soft: color-mix(in srgb, var(--workspace-primary) 20%, #181d25);
+  }
+
   html {
     min-width: 320px;
     min-height: 100%;
-    background: #f8fafc;
+    background: var(--color-app-bg);
   }
 
   body {
     min-height: 100vh;
     margin: 0;
-    background: #f8fafc;
-    color: #0f172a;
+    background: var(--color-app-bg);
+    color: var(--color-text-primary);
     font-family: var(--font-sans);
     text-rendering: optimizeLegibility;
   }
