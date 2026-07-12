@@ -5,7 +5,13 @@ import {
   useState,
 } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
-import { FiCheck, FiPackage, FiTruck } from 'react-icons/fi';
+import {
+  FiArrowLeft,
+  FiArrowRight,
+  FiCheck,
+  FiPackage,
+  FiTruck,
+} from 'react-icons/fi';
 import {
   useLocation,
   useNavigate,
@@ -41,59 +47,6 @@ function getStepPath(
   const nextIndex = currentIndex + offset;
 
   return onboardingSteps[nextIndex]?.path;
-}
-
-function ArrowLeftIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 24 24"
-      className="size-4"
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="2"
-    >
-      <path d="m12 19-7-7 7-7" />
-      <path d="M19 12H5" />
-    </svg>
-  );
-}
-
-function ArrowRightIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 24 24"
-      className="size-4"
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="2"
-    >
-      <path d="M5 12h14" />
-      <path d="m12 5 7 7-7 7" />
-    </svg>
-  );
-}
-
-function CheckIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 24 24"
-      className="size-4"
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="2"
-    >
-      <path d="m20 6-11 11-5-5" />
-    </svg>
-  );
 }
 
 export function SetupShell({
@@ -304,7 +257,7 @@ export function SetupShell({
           {!isWelcomeStep && previousPath && (
             <Button
               variant="ghost"
-              leftIcon={<ArrowLeftIcon />}
+              leftIcon={<FiArrowLeft className="size-4" />}
               onClick={() => void handleBack()}
               className="px-0 hover:-translate-x-0.5 hover:bg-transparent"
             >
@@ -321,7 +274,7 @@ export function SetupShell({
           {isReviewStep
             ? 'Complete Setup'
             : 'Continue'}
-          {isReviewStep ? <CheckIcon /> : <ArrowRightIcon />}
+          {isReviewStep ? <FiCheck className="size-4" /> : <FiArrowRight className="size-4" />}
         </Button>
       </footer>
     </div>

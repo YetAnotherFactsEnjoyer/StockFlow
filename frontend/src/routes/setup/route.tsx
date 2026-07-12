@@ -4,7 +4,10 @@ import {
   redirect,
 } from '@tanstack/react-router';
 
-import { onboardingRepository } from '../../features/onboarding/api';
+import {
+  isOnboardingComplete,
+  onboardingRepository,
+} from '../../features/onboarding/api';
 import { SetupShell } from '../../features/onboarding/components/SetupShell';
 
 export const Route = createFileRoute('/setup')({
@@ -12,7 +15,7 @@ export const Route = createFileRoute('/setup')({
     const state =
       await onboardingRepository.getState();
 
-    if (state.status === 'completed') {
+    if (isOnboardingComplete(state)) {
       throw redirect({
         to: '/',
       });

@@ -4,14 +4,17 @@ import {
   redirect
 } from '@tanstack/react-router';
 
-import { onboardingRepository } from '../features/onboarding/api';
+import {
+  isOnboardingComplete,
+  onboardingRepository,
+} from '../features/onboarding/api';
 import { onboardingSteps } from '../features/onboarding/config/onboardingSteps';
 import { AppLayout } from '../layouts/AppLayout';
 
 export const Route = createFileRoute('/_app')({
     beforeLoad: async () => {
         const state = await onboardingRepository.getState();
-        if (state.status === 'completed') {
+        if (isOnboardingComplete(state)) {
             return;
         }
         const savedStep = onboardingSteps.find(

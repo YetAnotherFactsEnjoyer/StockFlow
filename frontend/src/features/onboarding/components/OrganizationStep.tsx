@@ -1,4 +1,5 @@
 import type { ChangeEvent, ReactNode } from 'react';
+import { FiChevronDown } from 'react-icons/fi';
 
 import { useOnboarding } from '../context/useOnboarding';
 
@@ -295,19 +296,9 @@ function FormField({
 
 function SelectArrow() {
   return (
-    <svg
+    <FiChevronDown
       aria-hidden="true"
-      viewBox="0 0 20 20"
-      fill="none"
       className="pointer-events-none absolute right-4 top-1/2 size-4 -translate-y-1/2 text-text-secondary"
-    >
-      <path
-        d="M5 7.5L10 12.5L15 7.5"
-        stroke="currentColor"
-        strokeWidth="1.75"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
+    />
   );
 }

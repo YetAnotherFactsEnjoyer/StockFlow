@@ -1,10 +1,11 @@
-import type { ReactElement } from 'react';
 import type { IconType } from 'react-icons';
 import {
   FiBox,
   FiBriefcase,
   FiDatabase,
   FiPenTool,
+  FiRefreshCw,
+  FiShield,
   FiUsers,
 } from 'react-icons/fi';
 import {
@@ -84,12 +85,12 @@ const trustPoints = [
   {
     title: 'Self-hosted',
     description: 'Your configuration remains under your control.',
-    icon: ShieldIcon,
+    icon: FiShield,
   },
   {
     title: 'Resumable',
     description: 'Your progress can be saved and continued later.',
-    icon: RefreshIcon,
+    icon: FiRefreshCw,
   },
 ];
 
@@ -304,7 +305,7 @@ function TrustPoint({
 }: {
   title: string;
   description: string;
-  Icon: () => ReactElement;
+  Icon: IconType;
 }) {
   return (
     <div className="flex items-start gap-3">
@@ -322,42 +323,5 @@ function TrustPoint({
         </p>
       </div>
     </div>
-  );
-}
-
-function ShieldIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 24 24"
-      className="size-4"
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="2"
-    >
-      <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.68 0C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
-    </svg>
-  );
-}
-
-function RefreshIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 24 24"
-      className="size-4"
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="2"
-    >
-      <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
-      <path d="M3 3v5h5" />
-      <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16" />
-      <path d="M16 16h5v5" />
-    </svg>
   );
 }

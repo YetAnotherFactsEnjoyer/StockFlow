@@ -11,6 +11,15 @@ function cloneDefaultState(): OnboardingState {
   return structuredClone(defaultOnboardingState);
 }
 
+export function isOnboardingComplete(
+  state: Pick<OnboardingState, 'status' | 'completedSteps'>,
+) {
+  return (
+    state.status === 'completed' ||
+    state.completedSteps.includes('review')
+  );
+}
+
 export function readStoredState(): OnboardingState {
   const storedValue = window.localStorage.getItem(STORAGE_KEY);
 
@@ -19,7 +28,19 @@ export function readStoredState(): OnboardingState {
   }
 
   try {
-    return JSON.parse(storedValue) as OnboardingState;
+    const storedState = JSON.parse(storedValue) as OnboardingState;
+
+    if (
+      storedState.completedSteps?.includes('review') &&
+      storedState.status !== 'completed'
+    ) {
+      return writeStoredState({
+        ...storedState,
+        status: 'completed',
+      });
+    }
+
+    return storedState;
   } catch {
     window.localStorage.removeItem(STORAGE_KEY);
     return cloneDefaultState();
