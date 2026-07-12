@@ -1,21 +1,34 @@
 import {
   createFileRoute,
   Outlet,
+  redirect,
 } from '@tanstack/react-router';
 
+import {
+  isOnboardingComplete,
+  onboardingRepository,
+} from '../../features/onboarding/api';
 import { SetupShell } from '../../features/onboarding/components/SetupShell';
-import { OnboardingProvider } from '../../features/onboarding/context/OnboardingProvider';
 
 export const Route = createFileRoute('/setup')({
+  beforeLoad: async () => {
+    const state =
+      await onboardingRepository.getState();
+
+    if (isOnboardingComplete(state)) {
+      throw redirect({
+        to: '/',
+      });
+    }
+  },
+
   component: SetupLayoutRoute,
 });
 
 function SetupLayoutRoute() {
   return (
-    <OnboardingProvider>
       <SetupShell>
         <Outlet />
       </SetupShell>
-    </OnboardingProvider>
   );
 }

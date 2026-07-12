@@ -1,1 +1,5 @@
-export { localOnboardingRepository as onboardingRepository } from './localOnboardingRepository';
+export {
+  localOnboardingRepository as onboardingRepository,
+  isOnboardingComplete,
+  readStoredState,
+} from './localOnboardingRepository';

@@ -5,7 +5,13 @@ import {
   useState,
 } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
-import { FiCheck, FiPackage, FiTruck } from 'react-icons/fi';
+import {
+  FiArrowLeft,
+  FiArrowRight,
+  FiCheck,
+  FiPackage,
+  FiTruck,
+} from 'react-icons/fi';
 import {
   useLocation,
   useNavigate,
@@ -19,6 +25,7 @@ import {
 import { useOnboarding } from '../context/useOnboarding';
 import { AnimatedStep } from './AnimatedStep';
 import { StockFlowLogo } from '../../../shared/components/StockFlowLogo';
+import { onboardingRepository } from '../api';
 
 function getActiveStep(
   pathname: string,
@@ -42,59 +49,6 @@ function getStepPath(
   return onboardingSteps[nextIndex]?.path;
 }
 
-function ArrowLeftIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 24 24"
-      className="size-4"
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="2"
-    >
-      <path d="m12 19-7-7 7-7" />
-      <path d="M19 12H5" />
-    </svg>
-  );
-}
-
-function ArrowRightIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 24 24"
-      className="size-4"
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="2"
-    >
-      <path d="M5 12h14" />
-      <path d="m12 5 7 7-7 7" />
-    </svg>
-  );
-}
-
-function CheckIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 24 24"
-      className="size-4"
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="2"
-    >
-      <path d="m20 6-11 11-5-5" />
-    </svg>
-  );
-}
-
 export function SetupShell({
   children,
 }: {
@@ -105,7 +59,7 @@ export function SetupShell({
   const reduceMotion = useReducedMotion();
   const [isShipping, setIsShipping] = useState(false);
   const [isDelivered, setIsDelivered] = useState(false);
-  const { dispatch } = useOnboarding();
+  const { state, dispatch } = useOnboarding();
   const activeStep = getActiveStep(location.pathname);
   const currentIndex = onboardingSteps.findIndex(
     (step) => step.id === activeStep,
@@ -134,35 +88,72 @@ export function SetupShell({
   }
 
   async function handleContinue() {
-    if (isReviewStep) {
-      if (isShipping || isDelivered) return;
-
-      setIsShipping(true);
-      await new Promise((resolve) =>
-        window.setTimeout(resolve, reduceMotion ? 150 : 1750),
-      );
-
-      dispatch({
-        type: 'MARK_STEP_COMPLETE',
-        payload: activeStep,
-      });
-      setIsDelivered(true);
+  if (isReviewStep) {
+    if (isShipping || isDelivered) {
       return;
     }
+
+    setIsShipping(true);
+
+    await new Promise((resolve) =>
+      window.setTimeout(
+        resolve,
+        reduceMotion ? 150 : 1750,
+      ),
+    );
+
+    // Add the completion code here
+    const completedState = {
+      ...state,
+      status: 'completed' as const,
+      currentStep: 'review' as const,
+      completedSteps:
+        state.completedSteps.includes('review')
+          ? state.completedSteps
+          : [
+              ...state.completedSteps,
+              'review' as const,
+            ],
+    };
+
+    await onboardingRepository.saveState(
+      completedState,
+    );
 
     dispatch({
-      type: 'MARK_STEP_COMPLETE',
-      payload: activeStep,
+      type: 'HYDRATE',
+      payload: completedState,
     });
 
-    if (!nextPath) {
-      return;
-    }
+    setIsDelivered(true);
+
+    await new Promise((resolve) =>
+      window.setTimeout(
+        resolve,
+        reduceMotion ? 200 : 900,
+      ),
+    );
 
     await navigate({
-      to: nextPath,
+      to: '/',
     });
+
+    return;
   }
+
+  dispatch({
+    type: 'MARK_STEP_COMPLETE',
+    payload: activeStep,
+  });
+
+  if (!nextPath) {
+    return;
+  }
+
+  await navigate({
+    to: nextPath,
+  });
+}
 
   return (
     <div className="relative flex min-h-screen w-full select-none flex-col overflow-hidden bg-[#f8f9fa] text-text-primary">
@@ -266,7 +257,7 @@ export function SetupShell({
           {!isWelcomeStep && previousPath && (
             <Button
               variant="ghost"
-              leftIcon={<ArrowLeftIcon />}
+              leftIcon={<FiArrowLeft className="size-4" />}
               onClick={() => void handleBack()}
               className="px-0 hover:-translate-x-0.5 hover:bg-transparent"
             >
@@ -283,7 +274,7 @@ export function SetupShell({
           {isReviewStep
             ? 'Complete Setup'
             : 'Continue'}
-          {isReviewStep ? <CheckIcon /> : <ArrowRightIcon />}
+          {isReviewStep ? <FiCheck className="size-4" /> : <FiArrowRight className="size-4" />}
         </Button>
       </footer>
     </div>
