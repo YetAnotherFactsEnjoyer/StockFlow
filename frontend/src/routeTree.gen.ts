@@ -21,6 +21,7 @@ import { Route as SetupImportRouteImport } from './routes/setup/import'
 import { Route as SetupBrandingRouteImport } from './routes/setup/branding'
 import { Route as AppSuppliersRouteImport } from './routes/_app/suppliers'
 import { Route as AppProductsRouteImport } from './routes/_app/products'
+import { Route as AppSetupRouteRouteImport } from './routes/_app/setup/route'
 
 const AppRoute = AppRouteImport.update({
   id: '/_app',
@@ -81,9 +82,14 @@ const AppProductsRoute = AppProductsRouteImport.update({
   path: '/products',
   getParentRoute: () => AppRoute,
 } as any)
+const AppSetupRouteRoute = AppSetupRouteRouteImport.update({
+  id: '/setup',
+  path: '/setup',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
-  '/setup': typeof SetupRouteRouteWithChildren
+  '/setup': typeof AppSetupRouteRoute
   '/': typeof AppIndexRoute
   '/products': typeof AppProductsRoute
   '/suppliers': typeof AppSuppliersRoute
@@ -96,6 +102,7 @@ export interface FileRoutesByFullPath {
   '/setup/': typeof SetupIndexRoute
 }
 export interface FileRoutesByTo {
+  '/setup': typeof SetupIndexRoute
   '/products': typeof AppProductsRoute
   '/suppliers': typeof AppSuppliersRoute
   '/setup/branding': typeof SetupBrandingRoute
@@ -105,12 +112,12 @@ export interface FileRoutesByTo {
   '/setup/review': typeof SetupReviewRoute
   '/setup/team': typeof SetupTeamRoute
   '/': typeof AppIndexRoute
-  '/setup': typeof SetupIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/setup': typeof SetupRouteRouteWithChildren
   '/_app': typeof AppRouteWithChildren
+  '/_app/setup': typeof AppSetupRouteRoute
   '/_app/products': typeof AppProductsRoute
   '/_app/suppliers': typeof AppSuppliersRoute
   '/setup/branding': typeof SetupBrandingRoute
@@ -138,6 +145,7 @@ export interface FileRouteTypes {
     | '/setup/'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/setup'
     | '/products'
     | '/suppliers'
     | '/setup/branding'
@@ -147,11 +155,11 @@ export interface FileRouteTypes {
     | '/setup/review'
     | '/setup/team'
     | '/'
-    | '/setup'
   id:
     | '__root__'
     | '/setup'
     | '/_app'
+    | '/_app/setup'
     | '/_app/products'
     | '/_app/suppliers'
     | '/setup/branding'
@@ -255,6 +263,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProductsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/setup': {
+      id: '/_app/setup'
+      path: '/setup'
+      fullPath: '/setup'
+      preLoaderRoute: typeof AppSetupRouteRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
@@ -283,12 +298,14 @@ const SetupRouteRouteWithChildren = SetupRouteRoute._addFileChildren(
 )
 
 interface AppRouteChildren {
+  AppSetupRouteRoute: typeof AppSetupRouteRoute
   AppProductsRoute: typeof AppProductsRoute
   AppSuppliersRoute: typeof AppSuppliersRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppSetupRouteRoute: AppSetupRouteRoute,
   AppProductsRoute: AppProductsRoute,
   AppSuppliersRoute: AppSuppliersRoute,
   AppIndexRoute: AppIndexRoute,

@@ -11,7 +11,7 @@ function cloneDefaultState(): OnboardingState {
   return structuredClone(defaultOnboardingState);
 }
 
-function readStoredState(): OnboardingState {
+export function readStoredState(): OnboardingState {
   const storedValue = window.localStorage.getItem(STORAGE_KEY);
 
   if (!storedValue) {
@@ -41,7 +41,7 @@ export const localOnboardingRepository: OnboardingRepository = {
     return readStoredState();
   },
 
-  async saveState(state) {
+ async saveState(state) {
     return writeStoredState(state);
   },
 

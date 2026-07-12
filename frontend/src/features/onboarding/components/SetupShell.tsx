@@ -19,6 +19,7 @@ import {
 import { useOnboarding } from '../context/useOnboarding';
 import { AnimatedStep } from './AnimatedStep';
 import { StockFlowLogo } from '../../../shared/components/StockFlowLogo';
+import { onboardingRepository } from '../api';
 
 function getActiveStep(
   pathname: string,
@@ -105,7 +106,7 @@ export function SetupShell({
   const reduceMotion = useReducedMotion();
   const [isShipping, setIsShipping] = useState(false);
   const [isDelivered, setIsDelivered] = useState(false);
-  const { dispatch } = useOnboarding();
+  const { state, dispatch } = useOnboarding();
   const activeStep = getActiveStep(location.pathname);
   const currentIndex = onboardingSteps.findIndex(
     (step) => step.id === activeStep,
@@ -134,35 +135,72 @@ export function SetupShell({
   }
 
   async function handleContinue() {
-    if (isReviewStep) {
-      if (isShipping || isDelivered) return;
-
-      setIsShipping(true);
-      await new Promise((resolve) =>
-        window.setTimeout(resolve, reduceMotion ? 150 : 1750),
-      );
-
-      dispatch({
-        type: 'MARK_STEP_COMPLETE',
-        payload: activeStep,
-      });
-      setIsDelivered(true);
+  if (isReviewStep) {
+    if (isShipping || isDelivered) {
       return;
     }
+
+    setIsShipping(true);
+
+    await new Promise((resolve) =>
+      window.setTimeout(
+        resolve,
+        reduceMotion ? 150 : 1750,
+      ),
+    );
+
+    // Add the completion code here
+    const completedState = {
+      ...state,
+      status: 'completed' as const,
+      currentStep: 'review' as const,
+      completedSteps:
+        state.completedSteps.includes('review')
+          ? state.completedSteps
+          : [
+              ...state.completedSteps,
+              'review' as const,
+            ],
+    };
+
+    await onboardingRepository.saveState(
+      completedState,
+    );
 
     dispatch({
-      type: 'MARK_STEP_COMPLETE',
-      payload: activeStep,
+      type: 'HYDRATE',
+      payload: completedState,
     });
 
-    if (!nextPath) {
-      return;
-    }
+    setIsDelivered(true);
+
+    await new Promise((resolve) =>
+      window.setTimeout(
+        resolve,
+        reduceMotion ? 200 : 900,
+      ),
+    );
 
     await navigate({
-      to: nextPath,
+      to: '/',
     });
+
+    return;
   }
+
+  dispatch({
+    type: 'MARK_STEP_COMPLETE',
+    payload: activeStep,
+  });
+
+  if (!nextPath) {
+    return;
+  }
+
+  await navigate({
+    to: nextPath,
+  });
+}
 
   return (
     <div className="relative flex min-h-screen w-full select-none flex-col overflow-hidden bg-[#f8f9fa] text-text-primary">
