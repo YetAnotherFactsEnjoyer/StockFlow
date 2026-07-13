@@ -45,7 +45,29 @@
   --color-brand-hover: color-mix(in srgb, var(--workspace-primary, #2457d6) 82%, black);
   --color-brand-soft: color-mix(in srgb, var(--workspace-primary, #2457d6) 10%, white);
   --color-accent-default: var(--workspace-accent, #11b8b2);
+
+  /* Material Tailwind aliases mapped to StockFlow tokens. */
+  --color-background: var(--color-surface);
+  --color-foreground: var(--color-text-primary);
+  --color-primary: var(--color-brand-default);
+  --color-primary-dark: var(--color-brand-hover);
+  --color-primary-light: color-mix(in srgb, var(--workspace-primary, #2457d6) 84%, white);
+  --color-primary-foreground: #ffffff;
+  --color-secondary: var(--color-surface-secondary);
+  --color-secondary-dark: var(--color-border-subtle);
+  --color-secondary-light: var(--color-surface);
+  --color-secondary-foreground: var(--color-text-primary);
+  --color-surface-dark: var(--color-border-subtle);
+  --color-surface-light: var(--color-surface-secondary);
+  --color-surface-foreground: var(--color-text-primary);
+  --color-error: var(--color-danger);
+  --color-error-dark: #a62f3d;
+  --color-error-light: #dc6672;
+  --color-error-foreground: #ffffff;
   --color-success: #25845a;
+  --color-success-dark: #1d6846;
+  --color-success-light: #39a574;
+  --color-success-foreground: #ffffff;
   --color-warning: #b7791f;
   --color-danger: #c43d4b;
 

@@ -46,7 +46,7 @@ export type DashboardQuickActionId =
 export interface DashboardQuickAction {
   id: DashboardQuickActionId;
   label: string;
-  path: string;
+  path: '/products';
 }
 
 export interface DashboardViewModel {

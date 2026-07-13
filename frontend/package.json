@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@material-tailwind/react": "3.0.0-beta.24",
     "@tailwindcss/vite": "^4.3.2",
     "motion": "^12.42.2",
     "react": "^19.2.7",
