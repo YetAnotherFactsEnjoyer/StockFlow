@@ -25,6 +25,9 @@ function ProductsRoute() {
 
     defaultLowStockThreshold:
       state.inventory.defaultLowStockThreshold,
+
+    barcodeScanEnabled:
+      state.inventory.barcodeScanEnabled,
   };
 
   return (

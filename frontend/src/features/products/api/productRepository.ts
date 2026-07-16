@@ -1,5 +1,5 @@
 import type {
-  CreateProductInput,
+  CreateProductRequest,
   Product,
 } from '../types/product';
 
@@ -7,6 +7,6 @@ export interface ProductRepository {
   list(): Promise<Product[]>;
 
   create(
-    input: CreateProductInput,
+    request: CreateProductRequest,
   ): Promise<Product>;
 }

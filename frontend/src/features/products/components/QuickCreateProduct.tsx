@@ -30,7 +30,7 @@ import type {
   Product,
 } from '../types/product';
 import {
-  buildQuickProductInput,
+  buildQuickProductRequest,
 } from '../utils/buildQuickProductInput';
 import {
   hasProductDetailsErrors,
@@ -256,15 +256,15 @@ export function QuickCreateProduct({
     setSubmitting(true);
 
     try {
-      const input =
-        buildQuickProductInput(
+      const request =
+        buildQuickProductRequest(
           details,
           defaults,
         );
 
       const product =
         await productRepository.create(
-          input,
+          request,
         );
 
       dispatch({
@@ -475,7 +475,7 @@ interface ProductCreatedSuccessProps {
   reduceMotion: boolean;
 }
 
-function ProductCreatedSuccess({
+export function ProductCreatedSuccess({
   product,
   reduceMotion,
 }: ProductCreatedSuccessProps) {
