@@ -1,5 +1,5 @@
 import type {
-  CreateProductInput,
+  CreateProductRequest,
   Product,
 } from '../types/product';
 import type {
@@ -43,16 +43,21 @@ function writeProducts(
 export const localProductRepository:
   ProductRepository = {
   async list() {
-    return readProducts();
+    return [...readProducts()].sort(
+      (firstProduct, secondProduct) =>
+        secondProduct.createdAt.localeCompare(
+          firstProduct.createdAt,
+        ),
+    );
   },
 
   async create(
-    input: CreateProductInput,
+    request: CreateProductRequest,
   ) {
     const products = readProducts();
 
     const normalizedSku =
-      input.sku?.toLowerCase();
+      request.details.sku?.toLowerCase();
 
     if (
       normalizedSku &&
@@ -67,31 +72,75 @@ export const localProductRepository:
       );
     }
 
-    const timestamp =
-      new Date().toISOString();
+    const preferredSupplierCount =
+      request.suppliers?.filter(
+        (supplier) => supplier.preferred,
+      ).length ?? 0;
+
+    if (
+      request.suppliers &&
+      request.suppliers.length > 0 &&
+      preferredSupplierCount !== 1
+    ) {
+      throw new Error(
+        'Choose exactly one preferred supplier.',
+      );
+    }
+
+    const timestamp = new Date().toISOString();
+    const defaultAvailability =
+      request.details.type === 'finished_good'
+        ? 'all_customers'
+        : 'internal';
 
     const product: Product = {
       id: crypto.randomUUID(),
 
-      name: input.name,
-      sku: input.sku,
-      description: input.description,
+      name: request.details.name,
+      sku: request.details.sku,
+      description: request.details.description,
 
-      type: input.type,
-      stockUnit: input.stockUnit,
+      type: request.details.type,
+      stockUnit: request.details.stockUnit,
       customStockUnit:
-        input.customStockUnit,
+        request.details.customStockUnit,
 
       stockQuantity:
-        input.initialQuantity,
+        request.inventory?.initialQuantity ?? 0,
 
       reorderLevel:
-        input.reorderLevel,
+        request.inventory?.reorderLevel ?? null,
 
-      barcode: input.barcode,
+      barcode: request.inventory?.barcode ?? null,
 
       availability:
-        input.availability,
+        request.commercial?.availability ??
+        defaultAvailability,
+
+      defaultSellingPrice:
+        request.commercial?.defaultSellingPrice ?? null,
+
+      suppliers:
+        request.suppliers?.map((supplier) => ({
+          id: crypto.randomUUID(),
+          supplierId: supplier.supplierId,
+          supplierSku: supplier.supplierSku,
+          purchasePrice: supplier.purchasePrice,
+          minimumOrderQuantity:
+            supplier.minimumOrderQuantity,
+          leadTimeDays: supplier.leadTimeDays,
+          preferred: supplier.preferred,
+        })) ?? [],
+
+      customers:
+        request.commercial?.customers.map((customer) => ({
+          id: crypto.randomUUID(),
+          customerId: customer.customerId,
+          customerSku: customer.customerSku,
+          sellingPrice: customer.sellingPrice,
+          minimumOrderQuantity:
+            customer.minimumOrderQuantity,
+        })) ?? [],
 
       active: true,
 

@@ -100,4 +100,5 @@ export interface ProductCreationDefaults {
   skuRequired: boolean;
   lowStockEnabled: boolean;
   defaultLowStockThreshold: number;
+  barcodeScanEnabled: boolean;
 }
