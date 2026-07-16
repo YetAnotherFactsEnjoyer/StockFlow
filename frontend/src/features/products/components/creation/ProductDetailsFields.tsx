@@ -1,14 +1,10 @@
 import {
-  Input as MaterialInput,
-  Select as MaterialSelect,
-  Textarea as MaterialTextarea,
-} from '@material-tailwind/react';
-import type { ReactNode } from 'react';
-import {
-  FiCheck,
   FiChevronDown,
 } from 'react-icons/fi';
 
+import {
+  Input,
+} from '../../../../shared/components/Input';
 import type {
   ProductDetailsDraft,
   ProductType,
@@ -33,80 +29,27 @@ const productTypeOptions: ReadonlyArray<{
   value: ProductType;
   label: string;
 }> = [
-  {
-    value: 'finished_good',
-    label: 'Finished good',
-  },
-  {
-    value: 'raw_material',
-    label: 'Raw material',
-  },
-  {
-    value: 'component',
-    label: 'Component',
-  },
-  {
-    value: 'consumable',
-    label: 'Consumable',
-  },
-  {
-    value: 'packaging',
-    label: 'Packaging',
-  },
-  {
-    value: 'other',
-    label: 'Other',
-  },
+  { value: 'finished_good', label: 'Finished good' },
+  { value: 'raw_material', label: 'Raw material' },
+  { value: 'component', label: 'Component' },
+  { value: 'consumable', label: 'Consumable' },
+  { value: 'packaging', label: 'Packaging' },
+  { value: 'other', label: 'Other' },
 ];
 
 const stockUnitOptions: ReadonlyArray<{
   value: StockUnit;
   label: string;
 }> = [
-  {
-    value: 'unit',
-    label: 'Unit',
-  },
-  {
-    value: 'kilogram',
-    label: 'Kilogram',
-  },
-  {
-    value: 'gram',
-    label: 'Gram',
-  },
-  {
-    value: 'liter',
-    label: 'Liter',
-  },
-  {
-    value: 'meter',
-    label: 'Meter',
-  },
-  {
-    value: 'box',
-    label: 'Box',
-  },
-  {
-    value: 'pallet',
-    label: 'Pallet',
-  },
-  {
-    value: 'custom',
-    label: 'Custom unit',
-  },
+  { value: 'unit', label: 'Unit' },
+  { value: 'kilogram', label: 'Kilogram' },
+  { value: 'gram', label: 'Gram' },
+  { value: 'liter', label: 'Liter' },
+  { value: 'meter', label: 'Meter' },
+  { value: 'box', label: 'Box' },
+  { value: 'pallet', label: 'Pallet' },
+  { value: 'custom', label: 'Custom unit' },
 ];
-
-const materialControlClasses = [
-  'min-h-10 w-full rounded-md border border-border-subtle bg-transparent px-2.5 py-2',
-  'text-sm text-text-primary outline-none transition duration-200',
-  'select-text shadow-sm ring-0 placeholder:text-text-secondary/70',
-  'hover:border-text-primary/60 hover:ring-3 hover:ring-text-primary/5',
-  'focus:border-text-primary focus:ring-3 focus:ring-text-primary/10',
-  'data-[error=true]:border-danger data-[error=true]:hover:border-danger',
-  'data-[error=true]:focus:border-danger data-[error=true]:focus:ring-danger/10',
-  'disabled:cursor-not-allowed disabled:bg-surface-secondary disabled:text-text-secondary',
-].join(' ');
 
 export function ProductDetailsFields({
   value,
@@ -117,8 +60,8 @@ export function ProductDetailsFields({
   onChange,
 }: ProductDetailsFieldsProps) {
   return (
-    <div className="grid gap-5">
-      <MaterialTextField
+    <div className="grid grid-cols-1 gap-x-6 gap-y-6 md:grid-cols-2">
+      <Input
         id="product-name"
         label="Product name"
         value={value.name}
@@ -127,34 +70,27 @@ export function ProductDetailsFields({
         required
         maxLength={120}
         autoComplete="off"
-        initialFocus={autoFocusName}
-        placeholder="Wireless barcode scanner"
-        onChange={(nextValue) =>
-          onChange({
-            name: nextValue,
-          })
+        autoFocus={autoFocusName}
+        onChange={(event) =>
+          onChange({ name: event.currentTarget.value })
         }
       />
 
-      <MaterialTextField
+      <Input
         id="product-sku"
-        label="Internal SKU"
+        label={skuRequired ? 'Internal SKU' : 'Internal SKU (optional)'}
         value={value.sku}
         error={errors.sku}
         disabled={disabled}
         required={skuRequired}
-        optional={!skuRequired}
         maxLength={64}
         autoComplete="off"
-        placeholder="SCN-001"
-        onChange={(nextValue) =>
-          onChange({
-            sku: nextValue,
-          })
+        onChange={(event) =>
+          onChange({ sku: event.currentTarget.value })
         }
       />
 
-      <SelectField
+      <FloatingSelect
         id="product-type"
         label="Product type"
         value={value.type}
@@ -163,14 +99,11 @@ export function ProductDetailsFields({
         required
         options={productTypeOptions}
         onChange={(nextValue) =>
-          onChange({
-            type:
-              nextValue as ProductType | '',
-          })
+          onChange({ type: nextValue as ProductType | '' })
         }
       />
 
-      <SelectField
+      <FloatingSelect
         id="product-stock-unit"
         label="Stock unit"
         value={value.stockUnit}
@@ -179,15 +112,12 @@ export function ProductDetailsFields({
         required
         options={stockUnitOptions}
         onChange={(nextValue) =>
-          onChange({
-            stockUnit:
-              nextValue as StockUnit | '',
-          })
+          onChange({ stockUnit: nextValue as StockUnit | '' })
         }
       />
 
       {value.stockUnit === 'custom' && (
-        <MaterialTextField
+        <Input
           id="product-custom-stock-unit"
           label="Custom stock unit"
           value={value.customStockUnit}
@@ -197,326 +127,155 @@ export function ProductDetailsFields({
           required
           maxLength={40}
           autoComplete="off"
-          placeholder="Roll"
-          onChange={(nextValue) =>
+          onChange={(event) =>
             onChange({
-              customStockUnit: nextValue,
+              customStockUnit: event.currentTarget.value,
             })
           }
         />
       )}
 
-      <TextareaField
+      <FloatingTextarea
         id="product-description"
-        label="Description"
+        label="Description (optional)"
         value={value.description}
         error={errors.description}
         hint={`${value.description.length}/500 characters`}
         disabled={disabled}
-        maxLength={500}
-        placeholder="Add purchasing, storage, or internal notes."
         onChange={(nextValue) =>
-          onChange({
-            description: nextValue,
-          })
+          onChange({ description: nextValue })
         }
       />
     </div>
   );
 }
 
-interface FieldShellProps {
+interface FloatingSelectProps {
   id: string;
   label: string;
+  value: string;
   error?: string;
-  hint?: string;
+  disabled: boolean;
   required?: boolean;
-  optional?: boolean;
-  children: (
-    descriptionId: string | undefined,
-  ) => ReactNode;
+  options: ReadonlyArray<{ value: string; label: string }>;
+  onChange: (value: string) => void;
 }
 
-function FieldShell({
+function FloatingSelect({
   id,
   label,
+  value,
   error,
-  hint,
+  disabled,
   required = false,
-  optional = false,
-  children,
-}: FieldShellProps) {
-  const descriptionId =
-    `${id}-description`;
-
-  const hasDescription =
-    Boolean(error || hint);
+  options,
+  onChange,
+}: FloatingSelectProps) {
+  const descriptionId = error ? `${id}-description` : undefined;
 
   return (
-    <div className="grid gap-1.5">
-      <div className="flex items-center justify-between gap-4">
-        <label
-          htmlFor={id}
-          className="text-sm font-medium text-text-primary"
-        >
-          {label}
-
-          {required && (
-            <span
-              aria-hidden="true"
-              className="ml-1 text-danger"
-            >
-              *
-            </span>
-          )}
-        </label>
-
-        {optional && (
-          <span className="text-xs text-text-secondary">
-            Optional
-          </span>
-        )}
-      </div>
-
-      {children(
-        hasDescription
-          ? descriptionId
-          : undefined,
-      )}
-
-      {hasDescription && (
-        <p
-          id={descriptionId}
+    <div className="grid gap-1.5 pt-3">
+      <div className="relative">
+        <select
+          id={id}
+          value={value}
+          required={required}
+          disabled={disabled}
+          aria-invalid={Boolean(error)}
+          aria-describedby={descriptionId}
+          onChange={(event) => onChange(event.currentTarget.value)}
           className={[
-            'text-xs',
+            'min-h-11 w-full appearance-none border-x-0 border-t-0 border-b-2 bg-transparent px-1 pb-2 pt-3 text-sm text-text-primary outline-none transition-all duration-200',
             error
-              ? 'text-danger'
-              : 'text-text-secondary',
+              ? 'border-danger focus:border-danger'
+              : 'border-border-subtle hover:border-text-secondary focus:border-brand-default',
           ].join(' ')}
         >
-          {error ?? hint}
-        </p>
+          <option value="">Select {label.toLowerCase()}</option>
+          {options.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+        <label
+          htmlFor={id}
+          className={[
+            'pointer-events-none absolute left-1 top-0 -translate-y-2 text-xs',
+            error ? 'text-danger' : 'text-text-secondary',
+          ].join(' ')}
+        >
+          {label}{required && <span className="ml-1 text-danger">*</span>}
+        </label>
+        <FiChevronDown
+          aria-hidden="true"
+          className="pointer-events-none absolute right-1 top-4 size-4 text-text-secondary"
+        />
+      </div>
+      {error && (
+        <p id={descriptionId} className="text-xs text-danger">{error}</p>
       )}
     </div>
   );
 }
 
-interface MaterialTextFieldProps {
-  id: string;
-  label: string;
-  value: string;
-  error?: string;
-  hint?: string;
-  disabled?: boolean;
-  required?: boolean;
-  optional?: boolean;
-  maxLength?: number;
-  autoComplete?: string;
-  placeholder?: string;
-  initialFocus?: boolean;
-  onChange: (value: string) => void;
-}
-
-function MaterialTextField({
+function FloatingTextarea({
   id,
   label,
   value,
   error,
   hint,
-  disabled = false,
-  required = false,
-  optional = false,
-  maxLength,
-  autoComplete,
-  placeholder,
-  initialFocus = false,
+  disabled,
   onChange,
-}: MaterialTextFieldProps) {
+}: {
+  id: string;
+  label: string;
+  value: string;
+  error?: string;
+  hint: string;
+  disabled: boolean;
+  onChange: (value: string) => void;
+}) {
+  const descriptionId = `${id}-description`;
+
   return (
-    <FieldShell
-      id={id}
-      label={label}
-      error={error}
-      hint={hint}
-      required={required}
-      optional={optional}
-    >
-      {(descriptionId) => (
-        <MaterialInput
+    <div className="grid gap-1.5 pt-3 md:col-span-2">
+      <div className="relative">
+        <textarea
           id={id}
-          type="text"
           value={value}
           disabled={disabled}
-          required={required}
-          maxLength={maxLength}
-          autoComplete={autoComplete}
-          placeholder={placeholder}
-          isError={Boolean(error)}
+          maxLength={500}
+          rows={3}
+          placeholder=" "
           aria-invalid={Boolean(error)}
           aria-describedby={descriptionId}
-          data-initial-focus={
-            initialFocus
-              ? 'true'
-              : undefined
-          }
-          className={materialControlClasses}
-          onChange={(event) =>
-            onChange(
-              event.currentTarget.value,
-            )
-          }
+          onChange={(event) => onChange(event.currentTarget.value)}
+          className={[
+            'peer min-h-24 w-full resize-y border-x-0 border-t-0 border-b-2 bg-transparent px-1 pb-2 pt-3 text-sm leading-6 text-text-primary outline-none transition-all duration-200 placeholder:text-transparent',
+            error
+              ? 'border-danger focus:border-danger'
+              : 'border-border-subtle hover:border-text-secondary focus:border-brand-default',
+          ].join(' ')}
         />
-      )}
-    </FieldShell>
-  );
-}
-
-interface SelectFieldProps {
-  id: string;
-  label: string;
-  value: string;
-  error?: string;
-  hint?: string;
-  disabled?: boolean;
-  required?: boolean;
-  options: ReadonlyArray<{
-    value: string;
-    label: string;
-  }>;
-  onChange: (value: string) => void;
-}
-
-function SelectField({
-  id,
-  label,
-  value,
-  error,
-  hint,
-  disabled = false,
-  required = false,
-  options,
-  onChange,
-}: SelectFieldProps) {
-  return (
-    <FieldShell
-      id={id}
-      label={label}
-      error={error}
-      hint={hint}
-      required={required}
-    >
-      {(descriptionId) => (
-        <MaterialSelect
-          name={id}
-          value={value}
-          disabled={disabled}
-          isError={Boolean(error)}
-          onValueChange={onChange}
+        <label
+          htmlFor={id}
+          className={[
+            'pointer-events-none absolute left-1 top-3 text-sm text-text-secondary transition-all duration-200',
+            'peer-focus:-translate-y-5 peer-focus:text-xs peer-focus:text-brand-default',
+            'peer-[:not(:placeholder-shown)]:-translate-y-5 peer-[:not(:placeholder-shown)]:text-xs',
+            error ? 'text-danger peer-focus:text-danger' : '',
+          ].join(' ')}
         >
-          <MaterialSelect.Trigger
-            id={id}
-            placeholder={`Select ${label.toLowerCase()}`}
-            aria-required={required}
-            aria-invalid={Boolean(error)}
-            aria-describedby={descriptionId}
-            indicator={
-              <FiChevronDown
-                aria-hidden="true"
-                className="size-4 shrink-0 text-text-secondary transition-transform duration-200 group-data-[open=true]:rotate-180"
-              />
-            }
-            className={[
-              'group flex min-h-10 w-full items-center justify-between gap-4 rounded-md',
-              'border border-border-subtle bg-transparent px-2.5 text-left text-sm text-text-primary',
-              'select-none shadow-sm ring-0 outline-none transition duration-200',
-              'hover:border-text-primary/60 hover:ring-3 hover:ring-text-primary/5',
-              'focus:border-text-primary focus:ring-3 focus:ring-text-primary/10',
-              'data-[open=true]:border-text-primary data-[open=true]:ring-3 data-[open=true]:ring-text-primary/10',
-              'data-[error=true]:border-danger data-[error=true]:focus:border-danger data-[error=true]:focus:ring-danger/10',
-              'disabled:cursor-not-allowed disabled:bg-surface-secondary disabled:text-text-secondary',
-            ].join(' ')}
-          >
-            {({ element }) =>
-              element ?? (
-                <span className="text-text-secondary">
-                  Select {label.toLowerCase()}
-                </span>
-              )
-            }
-          </MaterialSelect.Trigger>
-
-          <MaterialSelect.List className="flex max-h-72 flex-col gap-0.5 overflow-y-auto rounded-md border border-border-subtle bg-surface p-1 text-text-primary shadow-lg outline-none">
-            {options.map((option) => (
-              <MaterialSelect.Option
-                key={option.value}
-                value={option.value}
-                ripple={false}
-                indicator={
-                  <FiCheck className="size-4" />
-                }
-                className="flex w-full select-none items-center justify-between gap-4 rounded px-2.5 py-2 text-left text-sm text-text-primary outline-none transition hover:bg-surface-secondary focus:bg-surface-secondary data-[selected=true]:bg-surface-secondary"
-              >
-                {option.label}
-              </MaterialSelect.Option>
-            ))}
-          </MaterialSelect.List>
-        </MaterialSelect>
-      )}
-    </FieldShell>
-  );
-}
-
-interface TextareaFieldProps {
-  id: string;
-  label: string;
-  value: string;
-  error?: string;
-  hint?: string;
-  disabled?: boolean;
-  maxLength?: number;
-  placeholder?: string;
-  onChange: (value: string) => void;
-}
-
-function TextareaField({
-  id,
-  label,
-  value,
-  error,
-  hint,
-  disabled = false,
-  maxLength,
-  placeholder,
-  onChange,
-}: TextareaFieldProps) {
-  return (
-    <FieldShell
-      id={id}
-      label={label}
-      error={error}
-      hint={hint}
-      optional
-    >
-      {(descriptionId) => (
-        <MaterialTextarea
-          id={id}
-          value={value}
-          disabled={disabled}
-          maxLength={maxLength}
-          placeholder={placeholder}
-          rows={4}
-          resize
-          isError={Boolean(error)}
-          aria-invalid={Boolean(error)}
-          aria-describedby={descriptionId}
-          className={`${materialControlClasses} min-h-24 resize-y leading-6`}
-          onChange={(event) =>
-            onChange(
-              event.currentTarget.value,
-            )
-          }
-        />
-      )}
-    </FieldShell>
+          {label}
+        </label>
+      </div>
+      <p
+        id={descriptionId}
+        className={error ? 'text-xs text-danger' : 'text-xs text-text-secondary'}
+      >
+        {error ?? hint}
+      </p>
+    </div>
   );
 }
