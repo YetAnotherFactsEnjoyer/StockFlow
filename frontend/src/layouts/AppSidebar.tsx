@@ -1,4 +1,5 @@
 import { Link, useNavigate } from '@tanstack/react-router';
+import { motion, useReducedMotion } from 'motion/react';
 import type { IconType } from 'react-icons';
 import {
   FiBox,
@@ -27,6 +28,7 @@ const navigation: Array<{
 
 export function AppSidebar() {
   const navigate = useNavigate();
+  const reduceMotion = useReducedMotion();
   const { state, dispatch } = useOnboarding();
   const workspaceName = state.branding.applicationName || state.organization.name || 'StockFlow';
   const memberCount = state.teamMembers.length + 1;
@@ -39,9 +41,66 @@ export function AppSidebar() {
   }
 
   return (
-    <aside
-      className="sticky left-0 top-0 z-10 flex h-screen w-[280px] shrink-0 flex-col overflow-hidden border-r border-border-subtle bg-surface px-4 py-5 text-text-secondary"
-    >
+    <>
+      <header className="fixed inset-x-0 top-0 z-30 flex h-16 items-center justify-between border-b border-border-subtle bg-surface px-4 md:hidden">
+        <div className="flex min-w-0 items-center gap-3">
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-brand-default text-xs font-black tracking-tight text-white">
+            SF
+          </span>
+          <div className="min-w-0">
+            <p className="truncate text-sm font-bold text-text-primary">
+              StockFlow
+            </p>
+            <p className="truncate text-[11px] text-text-secondary">
+              {workspaceName}
+            </p>
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={() => void handleTestSetup()}
+          className="grid size-10 place-items-center rounded-xl text-text-secondary outline-none hover:bg-surface-secondary hover:text-text-primary focus-visible:ring-2 focus-visible:ring-brand-default/30"
+          aria-label="Test workspace setup"
+        >
+          <FiSettings aria-hidden="true" className="size-5" />
+        </button>
+      </header>
+
+      <nav
+        aria-label="Mobile navigation"
+        className="fixed inset-x-0 bottom-0 z-30 grid h-20 grid-cols-3 border-t border-border-subtle bg-surface px-2 pb-[env(safe-area-inset-bottom)] md:hidden"
+      >
+        {navigation.map(({ label, to, icon: Icon, exact }) => (
+          <Link
+            key={to}
+            to={to}
+            activeOptions={{ exact }}
+            className="relative flex flex-col items-center justify-center gap-1 rounded-xl text-[11px] font-semibold text-text-secondary outline-none transition-colors duration-200 hover:bg-surface-secondary focus-visible:ring-2 focus-visible:ring-brand-default/30"
+            activeProps={{
+              className:
+                'relative flex flex-col items-center justify-center gap-1 rounded-xl text-[11px] font-bold text-brand-default outline-none',
+            }}
+          >
+            {({ isActive }) => (
+              <>
+                {isActive && (
+                  <motion.span
+                    layoutId="mobile-navigation-active"
+                    className="absolute inset-1 rounded-xl bg-brand-soft"
+                    transition={reduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 260, damping: 28, mass: 0.8 }}
+                  />
+                )}
+                <Icon aria-hidden="true" className="relative size-5" />
+                <span className="relative">{label}</span>
+              </>
+            )}
+          </Link>
+        ))}
+      </nav>
+
+      <aside
+        className="sticky left-0 top-0 z-10 hidden h-screen w-[280px] shrink-0 flex-col overflow-hidden border-r border-border-subtle bg-surface px-4 py-5 text-text-secondary md:flex"
+      >
       <div className="mb-6 flex min-h-12 items-center gap-3 px-2">
         <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-brand-default text-sm font-black tracking-tight text-white">SF</span>
         <div className="min-w-0">
@@ -59,14 +118,22 @@ export function AppSidebar() {
       <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden pr-1">
       <nav aria-label="Main navigation" className="flex w-full flex-col gap-1.5">
         {navigation.map(({ label, to, icon: Icon, exact }) => (
-          <Link key={to} to={to} activeOptions={{ exact }} className="group relative flex min-h-12 w-full items-center gap-3 rounded-xl px-2.5 text-sm font-medium text-text-secondary transition-colors hover:bg-surface-secondary hover:text-text-primary" activeProps={{ className: 'group relative flex min-h-12 w-full items-center gap-3 rounded-xl bg-brand-soft px-2.5 text-sm font-semibold text-brand-default' }}>
+          <Link key={to} to={to} activeOptions={{ exact }} className="group relative flex min-h-12 w-full items-center gap-3 rounded-xl px-2.5 text-sm font-medium text-text-secondary transition-colors duration-200 hover:bg-surface-secondary hover:text-text-primary" activeProps={{ className: 'group relative flex min-h-12 w-full items-center gap-3 rounded-xl px-2.5 text-sm font-semibold text-brand-default' }}>
             {({ isActive }) => (
               <>
-                {isActive && <span className="absolute -left-4 top-1/2 h-6 w-1 -translate-y-1/2 rounded-r-full bg-brand-default" />}
-                <span className={['flex size-8 shrink-0 items-center justify-center rounded-lg transition-colors', isActive ? 'bg-brand-default text-white' : 'bg-surface-secondary text-text-secondary group-hover:text-text-primary'].join(' ')}>
+                {isActive && (
+                  <motion.span
+                    layoutId="desktop-navigation-active"
+                    className="absolute inset-0 rounded-xl bg-brand-soft"
+                    transition={reduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 260, damping: 28, mass: 0.8 }}
+                  >
+                    <span className="absolute -left-4 top-1/2 h-6 w-1 -translate-y-1/2 rounded-r-full bg-brand-default" />
+                  </motion.span>
+                )}
+                <span className={['relative flex size-8 shrink-0 items-center justify-center rounded-lg transition-colors duration-200', isActive ? 'bg-brand-default text-white' : 'bg-surface-secondary text-text-secondary group-hover:text-text-primary'].join(' ')}>
                   <Icon className="size-[18px]" aria-hidden="true" />
                 </span>
-                <span className="min-w-0 flex-1 truncate">{label}</span>
+                <span className="relative min-w-0 flex-1 truncate">{label}</span>
               </>
             )}
           </Link>
@@ -102,7 +169,8 @@ export function AppSidebar() {
         </div>
         <button type="button" className="flex size-8 shrink-0 items-center justify-center rounded-lg text-text-secondary hover:bg-surface hover:text-text-primary" aria-label="Workspace options"><FiMoreHorizontal className="size-5" /></button>
       </div>
-    </aside>
+      </aside>
+    </>
   );
 }
 

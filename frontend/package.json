@@ -12,6 +12,8 @@
   "dependencies": {
     "@material-tailwind/react": "3.0.0-beta.24",
     "@tailwindcss/vite": "^4.3.2",
+    "echarts": "^6.1.0",
+    "echarts-for-react": "^3.0.6",
     "motion": "^12.42.2",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",

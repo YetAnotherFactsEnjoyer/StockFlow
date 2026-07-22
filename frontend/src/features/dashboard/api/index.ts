@@ -1,6 +1,6 @@
 export {
-  mockDashboardRepository as dashboardRepository,
-} from './mockDashboardRepository';
+  localDashboardRepository as dashboardRepository,
+} from './localDashboardRepository';
 
 export type {
   DashboardRepository,
