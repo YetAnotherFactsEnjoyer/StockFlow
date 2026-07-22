@@ -1,43 +1,66 @@
-export interface DashboardSummary {
-  totalProducts: number;
-  totalUnits: number;
-  lowStockProducts: number;
-  inventoryValue: number | null;
-  activeSuppliers: number;
+import type {
+  ConfiguredCustomerAvailability,
+} from '../../products/types/product';
+import type {
+  ProductType,
+  StockUnit,
+} from '../../products/types/productCreation';
+
+export interface DashboardProductSnapshot {
+  id: string;
+  name: string;
+  sku: string | null;
+  type: ProductType;
+  stockUnit: StockUnit;
+  customStockUnit: string | null;
+  stockQuantity: number;
+  reorderLevel: number | null;
+  availability: ConfiguredCustomerAvailability;
+  supplierIds: string[];
+  customerIds: string[];
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
-export type DashboardAttentionStatus =
-  | 'low_stock'
-  | 'out_of_stock';
+export type DashboardMovementType =
+  | 'received'
+  | 'consumed'
+  | 'adjusted';
 
-export interface DashboardAttentionItem {
-  productId: string;
-  productName: string;
-  sku: string;
-  currentStock: number;
-  reorderLevel: number;
-  status: DashboardAttentionStatus;
-}
-
-export type DashboardActivityType =
-  | 'stock_in'
-  | 'stock_out'
-  | 'adjustment';
-
-export interface DashboardActivityItem {
+export interface DashboardMovementRaw {
   id: string;
   productId: string;
   productName: string;
-  sku: string;
-  type: DashboardActivityType;
+  type: DashboardMovementType;
   quantity: number;
-  performedBy: string | null;
-  createdAt: string;
+  occurredAt: string;
 }
 
+export interface UpcomingDeliveryRaw {
+  id: string;
+  reference: string;
+  supplierName: string;
+  expectedDate: string;
+  quantitySummary: string;
+  status: 'today' | 'upcoming' | 'late';
+}
+
+export type DashboardFeed<T> =
+  | {
+      status: 'available';
+      items: T[];
+    }
+  | {
+      status: 'unavailable';
+    };
+
 export interface DashboardOverview {
-  summary: DashboardSummary;
-  attentionItems: DashboardAttentionItem[];
-  recentActivity: DashboardActivityItem[];
-  updatedAt: string;
+  capturedAt: string;
+  updatedAt: string | null;
+  products: DashboardProductSnapshot[];
+  activeSupplierIds: string[];
+  activeCustomerIds: string[];
+  movements: DashboardFeed<DashboardMovementRaw>;
+  upcomingDeliveries: DashboardFeed<UpcomingDeliveryRaw>;
 }

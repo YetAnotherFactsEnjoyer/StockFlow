@@ -91,3 +91,8 @@ export interface CreateProductRequest {
   suppliers?: CreateProductSupplierRequest[];
   commercial?: CreateProductCommercialRequest;
 }
+
+export interface UpdateProductRequest
+  extends CreateProductRequest {
+  active: boolean;
+}
