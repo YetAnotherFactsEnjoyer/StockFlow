@@ -14,6 +14,7 @@ import {
   useState,
   type FormEvent,
 } from 'react';
+import { createPortal } from 'react-dom';
 import {
   FiCheck,
   FiPlus,
@@ -285,7 +286,7 @@ export function QuickCreateProduct({
     }
   }
 
-  return (
+  return createPortal(
     <div
       className="fixed inset-0 z-50 grid place-items-center overflow-y-auto bg-slate-950/55 px-4 py-6 backdrop-blur-sm sm:px-6"
       role="presentation"
@@ -466,7 +467,8 @@ export function QuickCreateProduct({
           )}
         </AnimatePresence>
       </section>
-    </div>
+    </div>,
+    document.body,
   );
 }
 

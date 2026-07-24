@@ -1,6 +1,7 @@
 package com.stockflow.supplier.controller;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,7 +36,7 @@ public class SupplierController {
     }
 
     @GetMapping("/{id}")
-    public SupplierResponse getSupplierById(@PathVariable Long id) {
+    public SupplierResponse getSupplierById(@PathVariable UUID id) {
         return supplierService.getSupplierById(id);
     }
 
@@ -45,12 +46,12 @@ public class SupplierController {
     }
 
     @PutMapping("/{id}")
-    public SupplierResponse updateSupplier(@PathVariable Long id, @Valid @RequestBody SupplierRequest request) {
+    public SupplierResponse updateSupplier(@PathVariable UUID id, @Valid @RequestBody SupplierRequest request) {
         return supplierService.updateSupplier(id, request);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteSupplier(@PathVariable Long id) {
+    public void deleteSupplier(@PathVariable UUID id) {
         supplierService.deleteSupplier(id);
     }
 }

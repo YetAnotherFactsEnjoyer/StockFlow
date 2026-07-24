@@ -20,8 +20,14 @@ import { Route as SetupInventoryRouteImport } from './routes/setup/inventory'
 import { Route as SetupImportRouteImport } from './routes/setup/import'
 import { Route as SetupBrandingRouteImport } from './routes/setup/branding'
 import { Route as AppSuppliersRouteImport } from './routes/_app/suppliers'
-import { Route as AppProductsRouteImport } from './routes/_app/products'
-import { Route as AppSetupRouteRouteImport } from './routes/_app/setup/route'
+import { Route as AppProductsRouteRouteImport } from './routes/_app/products/route'
+import { Route as AppProductsIndexRouteImport } from './routes/_app/products/index'
+import { Route as AppProductsNewRouteRouteImport } from './routes/_app/products/new/route'
+import { Route as AppProductsNewIndexRouteImport } from './routes/_app/products/new/index'
+import { Route as AppProductsNewSuppliersRouteImport } from './routes/_app/products/new/suppliers'
+import { Route as AppProductsNewReviewRouteImport } from './routes/_app/products/new/review'
+import { Route as AppProductsNewInventoryRouteImport } from './routes/_app/products/new/inventory'
+import { Route as AppProductsNewCustomersRouteImport } from './routes/_app/products/new/customers'
 
 const AppRoute = AppRouteImport.update({
   id: '/_app',
@@ -77,21 +83,51 @@ const AppSuppliersRoute = AppSuppliersRouteImport.update({
   path: '/suppliers',
   getParentRoute: () => AppRoute,
 } as any)
-const AppProductsRoute = AppProductsRouteImport.update({
+const AppProductsRouteRoute = AppProductsRouteRouteImport.update({
   id: '/products',
   path: '/products',
   getParentRoute: () => AppRoute,
 } as any)
-const AppSetupRouteRoute = AppSetupRouteRouteImport.update({
-  id: '/setup',
-  path: '/setup',
-  getParentRoute: () => AppRoute,
+const AppProductsIndexRoute = AppProductsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppProductsRouteRoute,
+} as any)
+const AppProductsNewRouteRoute = AppProductsNewRouteRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => AppProductsRouteRoute,
+} as any)
+const AppProductsNewIndexRoute = AppProductsNewIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppProductsNewRouteRoute,
+} as any)
+const AppProductsNewSuppliersRoute = AppProductsNewSuppliersRouteImport.update({
+  id: '/suppliers',
+  path: '/suppliers',
+  getParentRoute: () => AppProductsNewRouteRoute,
+} as any)
+const AppProductsNewReviewRoute = AppProductsNewReviewRouteImport.update({
+  id: '/review',
+  path: '/review',
+  getParentRoute: () => AppProductsNewRouteRoute,
+} as any)
+const AppProductsNewInventoryRoute = AppProductsNewInventoryRouteImport.update({
+  id: '/inventory',
+  path: '/inventory',
+  getParentRoute: () => AppProductsNewRouteRoute,
+} as any)
+const AppProductsNewCustomersRoute = AppProductsNewCustomersRouteImport.update({
+  id: '/customers',
+  path: '/customers',
+  getParentRoute: () => AppProductsNewRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/setup': typeof AppSetupRouteRoute
+  '/setup': typeof SetupRouteRouteWithChildren
   '/': typeof AppIndexRoute
-  '/products': typeof AppProductsRoute
+  '/products': typeof AppProductsRouteRouteWithChildren
   '/suppliers': typeof AppSuppliersRoute
   '/setup/branding': typeof SetupBrandingRoute
   '/setup/import': typeof SetupImportRoute
@@ -100,10 +136,15 @@ export interface FileRoutesByFullPath {
   '/setup/review': typeof SetupReviewRoute
   '/setup/team': typeof SetupTeamRoute
   '/setup/': typeof SetupIndexRoute
+  '/products/new': typeof AppProductsNewRouteRouteWithChildren
+  '/products/': typeof AppProductsIndexRoute
+  '/products/new/customers': typeof AppProductsNewCustomersRoute
+  '/products/new/inventory': typeof AppProductsNewInventoryRoute
+  '/products/new/review': typeof AppProductsNewReviewRoute
+  '/products/new/suppliers': typeof AppProductsNewSuppliersRoute
+  '/products/new/': typeof AppProductsNewIndexRoute
 }
 export interface FileRoutesByTo {
-  '/setup': typeof SetupIndexRoute
-  '/products': typeof AppProductsRoute
   '/suppliers': typeof AppSuppliersRoute
   '/setup/branding': typeof SetupBrandingRoute
   '/setup/import': typeof SetupImportRoute
@@ -112,13 +153,19 @@ export interface FileRoutesByTo {
   '/setup/review': typeof SetupReviewRoute
   '/setup/team': typeof SetupTeamRoute
   '/': typeof AppIndexRoute
+  '/setup': typeof SetupIndexRoute
+  '/products': typeof AppProductsIndexRoute
+  '/products/new/customers': typeof AppProductsNewCustomersRoute
+  '/products/new/inventory': typeof AppProductsNewInventoryRoute
+  '/products/new/review': typeof AppProductsNewReviewRoute
+  '/products/new/suppliers': typeof AppProductsNewSuppliersRoute
+  '/products/new': typeof AppProductsNewIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/setup': typeof SetupRouteRouteWithChildren
   '/_app': typeof AppRouteWithChildren
-  '/_app/setup': typeof AppSetupRouteRoute
-  '/_app/products': typeof AppProductsRoute
+  '/_app/products': typeof AppProductsRouteRouteWithChildren
   '/_app/suppliers': typeof AppSuppliersRoute
   '/setup/branding': typeof SetupBrandingRoute
   '/setup/import': typeof SetupImportRoute
@@ -128,6 +175,13 @@ export interface FileRoutesById {
   '/setup/team': typeof SetupTeamRoute
   '/_app/': typeof AppIndexRoute
   '/setup/': typeof SetupIndexRoute
+  '/_app/products/new': typeof AppProductsNewRouteRouteWithChildren
+  '/_app/products/': typeof AppProductsIndexRoute
+  '/_app/products/new/customers': typeof AppProductsNewCustomersRoute
+  '/_app/products/new/inventory': typeof AppProductsNewInventoryRoute
+  '/_app/products/new/review': typeof AppProductsNewReviewRoute
+  '/_app/products/new/suppliers': typeof AppProductsNewSuppliersRoute
+  '/_app/products/new/': typeof AppProductsNewIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -143,10 +197,15 @@ export interface FileRouteTypes {
     | '/setup/review'
     | '/setup/team'
     | '/setup/'
+    | '/products/new'
+    | '/products/'
+    | '/products/new/customers'
+    | '/products/new/inventory'
+    | '/products/new/review'
+    | '/products/new/suppliers'
+    | '/products/new/'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/setup'
-    | '/products'
     | '/suppliers'
     | '/setup/branding'
     | '/setup/import'
@@ -155,11 +214,17 @@ export interface FileRouteTypes {
     | '/setup/review'
     | '/setup/team'
     | '/'
+    | '/setup'
+    | '/products'
+    | '/products/new/customers'
+    | '/products/new/inventory'
+    | '/products/new/review'
+    | '/products/new/suppliers'
+    | '/products/new'
   id:
     | '__root__'
     | '/setup'
     | '/_app'
-    | '/_app/setup'
     | '/_app/products'
     | '/_app/suppliers'
     | '/setup/branding'
@@ -170,6 +235,13 @@ export interface FileRouteTypes {
     | '/setup/team'
     | '/_app/'
     | '/setup/'
+    | '/_app/products/new'
+    | '/_app/products/'
+    | '/_app/products/new/customers'
+    | '/_app/products/new/inventory'
+    | '/_app/products/new/review'
+    | '/_app/products/new/suppliers'
+    | '/_app/products/new/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -260,15 +332,57 @@ declare module '@tanstack/react-router' {
       id: '/_app/products'
       path: '/products'
       fullPath: '/products'
-      preLoaderRoute: typeof AppProductsRouteImport
+      preLoaderRoute: typeof AppProductsRouteRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/setup': {
-      id: '/_app/setup'
-      path: '/setup'
-      fullPath: '/setup'
-      preLoaderRoute: typeof AppSetupRouteRouteImport
-      parentRoute: typeof AppRoute
+    '/_app/products/': {
+      id: '/_app/products/'
+      path: '/'
+      fullPath: '/products/'
+      preLoaderRoute: typeof AppProductsIndexRouteImport
+      parentRoute: typeof AppProductsRouteRoute
+    }
+    '/_app/products/new': {
+      id: '/_app/products/new'
+      path: '/new'
+      fullPath: '/products/new'
+      preLoaderRoute: typeof AppProductsNewRouteRouteImport
+      parentRoute: typeof AppProductsRouteRoute
+    }
+    '/_app/products/new/': {
+      id: '/_app/products/new/'
+      path: '/'
+      fullPath: '/products/new/'
+      preLoaderRoute: typeof AppProductsNewIndexRouteImport
+      parentRoute: typeof AppProductsNewRouteRoute
+    }
+    '/_app/products/new/suppliers': {
+      id: '/_app/products/new/suppliers'
+      path: '/suppliers'
+      fullPath: '/products/new/suppliers'
+      preLoaderRoute: typeof AppProductsNewSuppliersRouteImport
+      parentRoute: typeof AppProductsNewRouteRoute
+    }
+    '/_app/products/new/review': {
+      id: '/_app/products/new/review'
+      path: '/review'
+      fullPath: '/products/new/review'
+      preLoaderRoute: typeof AppProductsNewReviewRouteImport
+      parentRoute: typeof AppProductsNewRouteRoute
+    }
+    '/_app/products/new/inventory': {
+      id: '/_app/products/new/inventory'
+      path: '/inventory'
+      fullPath: '/products/new/inventory'
+      preLoaderRoute: typeof AppProductsNewInventoryRouteImport
+      parentRoute: typeof AppProductsNewRouteRoute
+    }
+    '/_app/products/new/customers': {
+      id: '/_app/products/new/customers'
+      path: '/customers'
+      fullPath: '/products/new/customers'
+      preLoaderRoute: typeof AppProductsNewCustomersRouteImport
+      parentRoute: typeof AppProductsNewRouteRoute
     }
   }
 }
@@ -297,16 +411,46 @@ const SetupRouteRouteWithChildren = SetupRouteRoute._addFileChildren(
   SetupRouteRouteChildren,
 )
 
+interface AppProductsNewRouteRouteChildren {
+  AppProductsNewCustomersRoute: typeof AppProductsNewCustomersRoute
+  AppProductsNewInventoryRoute: typeof AppProductsNewInventoryRoute
+  AppProductsNewReviewRoute: typeof AppProductsNewReviewRoute
+  AppProductsNewSuppliersRoute: typeof AppProductsNewSuppliersRoute
+  AppProductsNewIndexRoute: typeof AppProductsNewIndexRoute
+}
+
+const AppProductsNewRouteRouteChildren: AppProductsNewRouteRouteChildren = {
+  AppProductsNewCustomersRoute: AppProductsNewCustomersRoute,
+  AppProductsNewInventoryRoute: AppProductsNewInventoryRoute,
+  AppProductsNewReviewRoute: AppProductsNewReviewRoute,
+  AppProductsNewSuppliersRoute: AppProductsNewSuppliersRoute,
+  AppProductsNewIndexRoute: AppProductsNewIndexRoute,
+}
+
+const AppProductsNewRouteRouteWithChildren =
+  AppProductsNewRouteRoute._addFileChildren(AppProductsNewRouteRouteChildren)
+
+interface AppProductsRouteRouteChildren {
+  AppProductsNewRouteRoute: typeof AppProductsNewRouteRouteWithChildren
+  AppProductsIndexRoute: typeof AppProductsIndexRoute
+}
+
+const AppProductsRouteRouteChildren: AppProductsRouteRouteChildren = {
+  AppProductsNewRouteRoute: AppProductsNewRouteRouteWithChildren,
+  AppProductsIndexRoute: AppProductsIndexRoute,
+}
+
+const AppProductsRouteRouteWithChildren =
+  AppProductsRouteRoute._addFileChildren(AppProductsRouteRouteChildren)
+
 interface AppRouteChildren {
-  AppSetupRouteRoute: typeof AppSetupRouteRoute
-  AppProductsRoute: typeof AppProductsRoute
+  AppProductsRouteRoute: typeof AppProductsRouteRouteWithChildren
   AppSuppliersRoute: typeof AppSuppliersRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
-  AppSetupRouteRoute: AppSetupRouteRoute,
-  AppProductsRoute: AppProductsRoute,
+  AppProductsRouteRoute: AppProductsRouteRouteWithChildren,
   AppSuppliersRoute: AppSuppliersRoute,
   AppIndexRoute: AppIndexRoute,
 }

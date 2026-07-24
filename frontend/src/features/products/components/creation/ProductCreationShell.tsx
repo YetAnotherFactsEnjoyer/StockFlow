@@ -2,7 +2,11 @@ import {
   Link,
   useNavigate,
 } from '@tanstack/react-router';
-import type { ReactNode } from 'react';
+import {
+  useEffect,
+  type ReactNode,
+} from 'react';
+import { createPortal } from 'react-dom';
 import {
   FiCheck,
   FiX,
@@ -42,10 +46,19 @@ export function ProductCreationShell({
 }: ProductCreationShellProps) {
   const navigate = useNavigate();
 
-  return (
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, []);
+
+  return createPortal(
     <div
       role="presentation"
-      className="fixed inset-0 z-50 grid place-items-center overflow-y-auto bg-slate-950/55 px-4 py-6 backdrop-blur-sm sm:px-6"
+      className="fixed inset-0 z-50 grid place-items-center overflow-hidden bg-slate-950/55 p-0 backdrop-blur-sm sm:px-6 sm:py-6"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) {
           void navigate({ to: '/products' });
@@ -57,10 +70,10 @@ export function ProductCreationShell({
         aria-modal="true"
         aria-labelledby="full-product-creation-title"
         aria-describedby="full-product-creation-description"
-        className="flex max-h-[calc(100vh-3rem)] w-full max-w-6xl flex-col overflow-hidden rounded-xl border border-border-subtle bg-surface shadow-xl"
+        className="flex h-full w-full max-w-6xl flex-col overflow-hidden border border-border-subtle bg-surface shadow-xl sm:max-h-[calc(100vh-3rem)] sm:rounded-xl"
       >
         <header className="shrink-0 border-b border-border-subtle bg-surface">
-          <div className="flex items-start justify-between gap-6 px-5 py-6 sm:px-8">
+          <div className="flex items-start justify-between gap-4 px-5 py-4 sm:gap-6 sm:px-8 sm:py-6">
           <div>
             <p className="text-sm font-semibold text-brand-default">
               Product creation
@@ -68,14 +81,14 @@ export function ProductCreationShell({
 
             <h1
               id="full-product-creation-title"
-              className="mt-1 text-2xl font-semibold text-text-primary sm:text-3xl"
+              className="mt-1 text-xl font-semibold text-text-primary sm:text-3xl"
             >
               Create a product
             </h1>
 
             <p
               id="full-product-creation-description"
-              className="mt-2 max-w-2xl text-sm leading-6 text-text-secondary"
+              className="mt-2 hidden max-w-2xl text-sm leading-6 text-text-secondary sm:block"
             >
               Configure the product details,
               inventory, sourcing, and customer
@@ -103,11 +116,12 @@ export function ProductCreationShell({
           <ProductCreationProgress />
         </div>
 
-        <main className="min-h-0 flex-1 overflow-y-auto bg-app-bg px-5 py-8 sm:px-8 sm:py-10">
+        <main className="min-h-0 flex-1 overflow-y-auto bg-app-bg px-5 py-6 sm:px-8 sm:py-10">
           {children}
         </main>
       </section>
-    </div>
+    </div>,
+    document.body,
   );
 }
 
@@ -117,9 +131,9 @@ function ProductCreationProgress() {
   return (
     <nav
       aria-label="Product creation progress"
-      className="w-full px-5 py-5 sm:px-8"
+      className="w-full px-5 py-3 sm:px-8 sm:py-5"
     >
-      <ol className="grid gap-3 sm:grid-cols-5">
+      <ol className="flex snap-x gap-3 overflow-x-auto pb-1 lg:grid lg:grid-cols-5 lg:overflow-visible lg:pb-0">
         {PRODUCT_CREATION_STEPS.map(
           (step, index) => {
             const status = getStepStatus(
@@ -138,7 +152,7 @@ function ProductCreationProgress() {
                     : undefined
                 }
                 className={[
-                  'flex min-w-0 items-center gap-3 rounded-xl border px-3 py-3',
+                  'flex min-w-[10rem] snap-start items-center gap-3 rounded-xl border px-3 py-3 lg:min-w-0',
                   getStepContainerClasses(
                     status,
                   ),

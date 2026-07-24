@@ -1,7 +1,7 @@
 package com.stockflow.supplier.dto;
 
 public class SupplierResponse {
-    private Long id;
+    private String id;
     private String name;
     private String contactPerson;
     private String email;
@@ -11,7 +11,7 @@ public class SupplierResponse {
     public SupplierResponse() {
     }
 
-    public SupplierResponse(Long id, String name, String contactPerson, String email, String phone, String address) {
+    public SupplierResponse(String id, String name, String contactPerson, String email, String phone, String address) {
         this.id = id;
         this.name = name;
         this.contactPerson = contactPerson;
@@ -20,7 +20,7 @@ public class SupplierResponse {
         this.address = address;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 

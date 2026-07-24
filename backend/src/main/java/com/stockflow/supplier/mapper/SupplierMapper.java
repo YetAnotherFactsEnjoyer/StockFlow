@@ -21,7 +21,7 @@ public final class SupplierMapper {
 
     public static SupplierResponse toResponse(Supplier supplier) {
         return new SupplierResponse(
-                supplier.getId(),
+                supplier.getId().toString(),
                 supplier.getName(),
                 supplier.getContactPerson(),
                 supplier.getEmail(),

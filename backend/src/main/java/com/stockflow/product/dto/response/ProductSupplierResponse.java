@@ -1,34 +1,22 @@
-package com.stockflow.product.dto.request;
+package com.stockflow.product.dto.response;
 
 import java.math.BigDecimal;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
-import jakarta.validation.constraints.Size;
+public class ProductSupplierResponse {
 
-public class ProductSupplierRequest {
-
-  @NotBlank
+  private String id;
   private String supplierId;
-
-  @Size(max = 64)
   private String supplierSku;
-
-  @PositiveOrZero
   private BigDecimal purchasePrice;
-
-  @Positive
   private Integer minimumOrderQuantity;
-
-  @PositiveOrZero
   private Integer leadTimeDays;
+  private boolean preferred;
 
-  @NotNull
-  private Boolean preferred;
+  public ProductSupplierResponse() {
+  }
 
-  public ProductSupplierRequest() {
+  public String getId() {
+    return this.id;
   }
 
   public String getSupplierId() {
@@ -51,8 +39,12 @@ public class ProductSupplierRequest {
     return this.leadTimeDays;
   }
 
-  public Boolean getPreferred() {
+  public boolean isPreferred() {
     return this.preferred;
+  }
+
+  public void setId(String id) {
+    this.id = id;
   }
 
   public void setSupplierId(String supplierId) {
@@ -67,7 +59,8 @@ public class ProductSupplierRequest {
     this.purchasePrice = purchasePrice;
   }
 
-  public void setMinimumOrderQuantity(Integer minimumOrderQuantity) {
+  public void setMinimumOrderQuantity(
+      Integer minimumOrderQuantity) {
     this.minimumOrderQuantity = minimumOrderQuantity;
   }
 
@@ -75,7 +68,7 @@ public class ProductSupplierRequest {
     this.leadTimeDays = leadTimeDays;
   }
 
-  public void setPreferred(Boolean preferred) {
+  public void setPreferred(boolean preferred) {
     this.preferred = preferred;
   }
 }

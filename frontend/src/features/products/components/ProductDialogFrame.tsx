@@ -3,6 +3,7 @@ import {
   useRef,
   type ReactNode,
 } from 'react';
+import { createPortal } from 'react-dom';
 import {
   motion,
   useReducedMotion,
@@ -113,7 +114,7 @@ export function ProductDialogFrame({
         ? 'max-w-xl'
         : 'h-full max-w-2xl rounded-none sm:rounded-l-2xl';
 
-  return (
+  return createPortal(
     <motion.div
       className={[
         'fixed inset-0 z-50 flex bg-black/45 p-0 backdrop-blur-[2px]',
@@ -158,6 +159,7 @@ export function ProductDialogFrame({
       >
         {children}
       </motion.div>
-    </motion.div>
+    </motion.div>,
+    document.body,
   );
 }

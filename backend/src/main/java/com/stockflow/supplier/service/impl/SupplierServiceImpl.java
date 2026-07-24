@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -45,7 +46,7 @@ public class SupplierServiceImpl implements SupplierService {
 
     @Override
     @Transactional(readOnly = true)
-    public SupplierResponse getSupplierById(Long id) {
+    public SupplierResponse getSupplierById(UUID id) {
         log.debug("Fetching supplier by id={}", id);
 
         Supplier supplier = supplierRepository.findById(id)
@@ -66,7 +67,7 @@ public class SupplierServiceImpl implements SupplierService {
     }
 
     @Override
-    public SupplierResponse updateSupplier(Long id, SupplierRequest request) {
+    public SupplierResponse updateSupplier(UUID id, SupplierRequest request) {
         log.info("Updating supplier id={}", id);
 
         Supplier existingSupplier = supplierRepository.findById(id)
@@ -87,7 +88,7 @@ public class SupplierServiceImpl implements SupplierService {
     }
 
     @Override
-    public void deleteSupplier(Long id) {
+    public void deleteSupplier(UUID id) {
         log.info("Deleting supplier id={}", id);
 
         Supplier existingSupplier = supplierRepository.findById(id)
