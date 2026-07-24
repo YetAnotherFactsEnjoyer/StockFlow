@@ -1,17 +1,26 @@
 package com.stockflow.product.entity;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import com.stockflow.supplier.entity.Supplier;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
+import com.stockflow.product.model.ProductAvailability;
+import com.stockflow.product.model.ProductType;
+import com.stockflow.product.model.StockUnit;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -19,101 +28,249 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "products")
 public class Product {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
-    @Column(nullable = false, length = 100)
-    private String name;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
 
-    @Column(length = 255)
-    private String description;
+  @Column(nullable = false, length = 120)
+  private String name;
 
-    @Column(nullable = false, unique = true, length = 50)
-    private String sku;
+  @Column(length = 64, unique = true)
+  private String sku;
 
-    @Column(nullable = false)
-    private BigDecimal price;
+  @Column(length = 500)
+  private String description;
 
-    @Column(nullable = false)
-    private Integer stockQuantity;
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  private ProductType type;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "supplier_id")
-    private Supplier supplier;
+  @Enumerated(EnumType.STRING)
+  @Column(name = "stock_unit", nullable = false)
+  private StockUnit stockUnit;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+  @Column(name = "custom_stock_unit", length = 40)
+  private String customStockUnit;
 
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  private ProductAvailability availability;
 
-    protected Product(){
+  @Column(name = "default_selling_price", precision = 19, scale = 4)
+  private BigDecimal defaultSellingPrice;
+
+  @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+  private ProductInventory inventory;
+
+  @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+  private List<ProductSupplier> suppliers = new ArrayList<>();
+
+  @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+  private List<ProductCustomer> customers = new ArrayList<>();
+
+  @Column(nullable = false)
+  private boolean active = true;
+
+  @Column(name = "created_at", nullable = false, updatable = false)
+  private Instant createdAt;
+
+  @Column(name = "updated_at", nullable = false)
+  private Instant updatedAt;
+
+  public Product() {
+  }
+
+  @PrePersist
+  protected void beforeInsert() {
+    Instant now = Instant.now();
+
+    this.createdAt = now;
+    this.updatedAt = now;
+  }
+
+  @PreUpdate
+  protected void beforeUpdate() {
+    this.updatedAt = Instant.now();
+  }
+
+  public UUID getId() {
+    return this.id;
+  }
+
+  public String getName() {
+    return this.name;
+  }
+
+  public String getSku() {
+    return this.sku;
+  }
+
+  public String getDescription() {
+    return this.description;
+  }
+
+  public ProductType getType() {
+    return this.type;
+  }
+
+  public StockUnit getStockUnit() {
+    return this.stockUnit;
+  }
+
+  public String getCustomStockUnit() {
+    return this.customStockUnit;
+  }
+
+  public ProductAvailability getAvailability() {
+    return this.availability;
+  }
+
+  public BigDecimal getDefaultSellingPrice() {
+    return this.defaultSellingPrice;
+  }
+
+  public ProductInventory getInventory() {
+    return this.inventory;
+  }
+
+  public List<ProductSupplier> getSuppliers() {
+    return this.suppliers;
+  }
+
+  public List<ProductCustomer> getCustomers() {
+    return this.customers;
+  }
+
+  public boolean isActive() {
+    return this.active;
+  }
+
+  public Instant getCreatedAt() {
+    return this.createdAt;
+  }
+
+  public Instant getUpdatedAt() {
+    return this.updatedAt;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public void setSku(String sku) {
+    this.sku = sku;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public void setType(ProductType type) {
+    this.type = type;
+  }
+
+  public void setStockUnit(StockUnit stockUnit) {
+    this.stockUnit = stockUnit;
+  }
+
+  public void setCustomStockUnit(
+      String customStockUnit) {
+    this.customStockUnit = customStockUnit;
+  }
+
+  public void setAvailability(
+      ProductAvailability availability) {
+    this.availability = availability;
+  }
+
+  public void setDefaultSellingPrice(
+      BigDecimal defaultSellingPrice) {
+    this.defaultSellingPrice = defaultSellingPrice;
+  }
+
+  public void setInventory(
+      ProductInventory inventory) {
+    if (this.inventory == inventory) {
+      return;
     }
 
-    public Product(String name, String description, String sku, BigDecimal price, Integer stockQuantity, Supplier supplier) {
-        this.name = name;
-        this.description = description;
-        this.sku = sku;
-        this.price = price;
-        this.stockQuantity = stockQuantity;
-        this.supplier = supplier;
+    ProductInventory previousInventory = this.inventory;
+
+    this.inventory = inventory;
+
+    if (previousInventory != null
+        && previousInventory.getProduct() == this) {
+      previousInventory.setProduct(null);
     }
 
-    public Long getId() {
-        return id;
+    if (inventory != null
+        && inventory.getProduct() != this) {
+      inventory.setProduct(this);
+    }
+  }
+
+  public void addSupplier(
+      ProductSupplier productSupplier) {
+    if (productSupplier == null
+        || this.suppliers.contains(productSupplier)) {
+      return;
     }
 
-    public String getName() {
-        return name;
+    this.suppliers.add(productSupplier);
+    productSupplier.setProduct(this);
+  }
+
+  public void removeSupplier(
+      ProductSupplier productSupplier) {
+    if (productSupplier == null) {
+      return;
     }
 
-    public String getDescription() {
-        return description;
+    if (this.suppliers.remove(productSupplier)) {
+      productSupplier.setProduct(null);
+    }
+  }
+
+  public void clearSuppliers() {
+    List<ProductSupplier> currentSuppliers = new ArrayList<>(this.suppliers);
+
+    for (ProductSupplier productSupplier : currentSuppliers) {
+      removeSupplier(productSupplier);
+    }
+  }
+
+  public void addCustomer(
+      ProductCustomer productCustomer) {
+    if (productCustomer == null
+        || this.customers.contains(productCustomer)) {
+      return;
     }
 
-    public String getSku() {
-        return sku;
+    this.customers.add(productCustomer);
+    productCustomer.setProduct(this);
+  }
+
+  public void removeCustomer(
+      ProductCustomer productCustomer) {
+    if (productCustomer == null) {
+      return;
     }
 
-    public BigDecimal getPrice() {
-        return price;
+    if (this.customers.remove(productCustomer)) {
+      productCustomer.setProduct(null);
     }
+  }
 
-    public Integer getStockQuantity() {
-        return stockQuantity;
-    }
+  public void clearCustomers() {
+    List<ProductCustomer> currentCustomers = new ArrayList<>(this.customers);
 
-    public Supplier getSupplier() {
-        return supplier;
+    for (ProductCustomer productCustomer : currentCustomers) {
+      removeCustomer(productCustomer);
     }
+  }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void updateDetails(String name, String description, String sku, BigDecimal price, Integer stockQuantity, Supplier supplier) {
-        this.name = name;
-        this.description = description;
-        this.sku = sku;
-        this.price = price;
-        this.stockQuantity = stockQuantity;
-        this.supplier = supplier;
-    }
-
-    @PrePersist
-    protected void onCreate() {
-        LocalDateTime now = LocalDateTime.now();
-        createdAt = now;
-        updatedAt = now;
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
+  public void setActive(boolean active) {
+    this.active = active;
+  }
 }

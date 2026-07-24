@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router';
+import { createPortal } from 'react-dom';
 import {
   FiArrowRight,
   FiSettings,
@@ -21,7 +22,7 @@ export function AddProductChoice({
     return null;
   }
 
-  return (
+  return createPortal(
     <div
       role="presentation"
       className="fixed inset-0 z-50 grid place-items-center bg-black/55 px-4 py-8"
@@ -129,6 +130,7 @@ export function AddProductChoice({
           </Link>
         </div>
       </section>
-    </div>
+    </div>,
+    document.body,
   );
 }

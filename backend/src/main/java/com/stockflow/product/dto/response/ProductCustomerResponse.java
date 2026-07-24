@@ -1,27 +1,20 @@
-package com.stockflow.product.dto.request;
+package com.stockflow.product.dto.response;
 
 import java.math.BigDecimal;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
-import jakarta.validation.constraints.Size;
+public class ProductCustomerResponse {
 
-public class ProductCustomerRequest {
-
-  @NotBlank
+  private String id;
   private String customerId;
-
-  @Size(max = 64)
   private String customerSku;
-
-  @PositiveOrZero
   private BigDecimal sellingPrice;
-
-  @Positive
   private Integer minimumOrderQuantity;
 
-  public ProductCustomerRequest() {
+  public ProductCustomerResponse() {
+  }
+
+  public String getId() {
+    return this.id;
   }
 
   public String getCustomerId() {
@@ -40,6 +33,10 @@ public class ProductCustomerRequest {
     return this.minimumOrderQuantity;
   }
 
+  public void setId(String id) {
+    this.id = id;
+  }
+
   public void setCustomerId(String customerId) {
     this.customerId = customerId;
   }
@@ -52,7 +49,8 @@ public class ProductCustomerRequest {
     this.sellingPrice = sellingPrice;
   }
 
-  public void setMinimumOrderQuantity(Integer minimumOrderQuantity) {
+  public void setMinimumOrderQuantity(
+      Integer minimumOrderQuantity) {
     this.minimumOrderQuantity = minimumOrderQuantity;
   }
 }

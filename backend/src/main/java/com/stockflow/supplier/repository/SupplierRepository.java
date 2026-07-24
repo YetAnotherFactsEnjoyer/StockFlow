@@ -2,6 +2,7 @@ package com.stockflow.supplier.repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import com.stockflow.supplier.entity.Supplier;
 
 @Repository
-public interface SupplierRepository extends JpaRepository<Supplier, Long> {
+public interface SupplierRepository extends JpaRepository<Supplier, UUID> {
 
     Optional<Supplier> findByEmail(String email);
     boolean existsByEmail(String email);

@@ -1,5 +1,7 @@
 package com.stockflow.supplier.entity;
 
+import java.util.UUID;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,8 +16,8 @@ import jakarta.validation.constraints.Size;
 public class Supplier {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @NotBlank
     @Size(max = 100)
@@ -45,7 +47,7 @@ public class Supplier {
         updateDetails(name, contactPerson, email, phone, address);
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 

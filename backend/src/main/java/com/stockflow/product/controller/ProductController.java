@@ -1,7 +1,9 @@
 package com.stockflow.product.controller;
 
 import java.util.List;
+import java.util.UUID;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,12 +12,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.stockflow.product.dto.ProductRequest;
-import com.stockflow.product.dto.ProductResponse;
+import com.stockflow.product.dto.request.CreateProductRequest;
+import com.stockflow.product.dto.request.UpdateProductRequest;
+import com.stockflow.product.dto.response.ProductResponse;
 import com.stockflow.product.service.ProductService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/products")
@@ -28,31 +33,33 @@ public class ProductController {
         this.productService = productService;
     }
 
-   @GetMapping
-    public List<ProductResponse> getAllProducts(@RequestParam(required = false) String search) {
-        return productService.getAllProducts(search);
+    @GetMapping
+    public List<ProductResponse> getAllProducts() {
+        return productService.getAllProducts();
     }
 
     @GetMapping("/{id}")
-    public ProductResponse getProductById(@PathVariable Long id) {
+    public ProductResponse getProductById(@PathVariable UUID id) {
         return productService.getProductById(id);
     }
 
     @PostMapping
-    public ProductResponse createProduct(@RequestBody ProductRequest request) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public ProductResponse createProduct(
+            @Valid @RequestBody CreateProductRequest request) {
         return productService.createProduct(request);
     }
 
     @PutMapping("/{id}")
     public ProductResponse updateProduct(
-            @PathVariable Long id,
-            @RequestBody ProductRequest request
-    ) {
+            @PathVariable UUID id,
+            @Valid @RequestBody UpdateProductRequest request) {
         return productService.updateProduct(id, request);
-    } 
+    }
 
     @DeleteMapping("/{id}")
-    public void deleteProduct(@PathVariable Long id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteProduct(@PathVariable UUID id) {
         productService.deleteProduct(id);
     }
 }
