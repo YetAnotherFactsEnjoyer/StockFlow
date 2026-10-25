@@ -1,0 +1,10 @@
+.git
+.gradle
+build
+.env
+*.zip
+.idea
+.vscode
+README.md
+scripts
+.github

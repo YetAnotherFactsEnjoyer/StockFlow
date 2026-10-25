@@ -1,0 +1,9 @@
+.gradle/
+build/
+.env
+.idea/
+.vscode/
+*.iml
+*.log
+.DS_Store
+__pycache__/
